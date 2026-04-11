@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GameData>
+    <IconTextureAtlases>
+        <Row Name="ATLAS_MAB_AirSlots_22"   Baseline="5" IconSize="22" Filename="Banner_Planes.dds"/>
+        <Row Name="ATLAS_MAB_FAVOR_22"      Baseline="6" IconSize="22" IconsPerRow="1" IconsPerColumn="1" Filename="XP2_Yields16"/>
+		<Row Name="ATLAS_MAB_Power_22"      Baseline="6" IconSize="22" IconsPerRow="4" IconsPerColumn="1" Filename="XP2_StatusEffects20"/>
+    </IconTextureAtlases>
+    <IconDefinitions>
+        <Row Name="MAB_AirSlots_22" Atlas="ATLAS_MAB_AirSlots_22" Index="0"/>
+        <Row Name="MAB_FAVOR_22" Atlas="ATLAS_MAB_FAVOR_22" Index="0"/>
+		<Row Name="MAB_Power_22" Atlas="ATLAS_MAB_Power_22" Index="1"/>
+    </IconDefinitions>
+</GameData>
+
+

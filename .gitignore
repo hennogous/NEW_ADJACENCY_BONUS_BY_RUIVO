@@ -1,0 +1,19 @@
+# Windows system files
+Thumbs.db
+desktop.ini
+
+# Python files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Mod generated files (Included as requested)
+# refer_table-参考表/
+# 参考表输出/
+
+# Excel temporary files
+~$*.xlsx
+
+# Civilization VI specific (if any logs or temporary build files exist)
+*.log
+*.bak

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GameData>
+	<LocalizedText>
+
+	<!--模组标题-->
+		<Row Tag="LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_NAME" Language="zh_Hans_CN">
+			<Text>[COLOR:ResGoldLabelCS]【未来已至】模块化相邻加成[ENDCOLOR]·[COLOR:PiratesButtonCS]核心[ENDCOLOR]</Text>
+		</Row>
+		<Row Tag="LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_TEASER" Language="zh_Hans_CN">
+			<Text>本mod设计了一套全新的相邻加成体系。</Text>
+		</Row>
+		<Row Tag="LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_DESCRIPTION" Language="zh_Hans_CN">
+			<Text>[COLOR_FLOAT_CULTURE][ICON_new]本mod设计了一套全新的相邻加成体系，除极端情况下，几乎不会与任何mod发生冲突。[ENDCOLOR][newline][newline][COLOR_FLOAT_SCIENCE][ICON_new]本mod新增了多种全新的相邻加成，并且能够复现原版所有可能的相邻加成，在此基础上，还能进行更为可控的拓展。[newline][ICON_new]相邻类型包括但不限于：相邻每段河流（区别于原版商业中心的仅一条河流），相邻每位在岗公民（完全可以拓展专家岗位体系）。[newline][ICON_new]相邻加成产出在原版6种产出的基础上，还增加了住房、宜居、忠诚度、电力等广义产出。[newline][ICON_new]同时，绝大部分对象都能作为相邻加成：如建筑、政策、科技市政、信仰等，而且能被二次发起：文明特质/领袖特质发起的由建筑或其他对象进行二次发起。[ENDCOLOR][newline][newline][COLOR_FLOAT_GOLD][ICON_new]感谢各位modder大佬/前人的耐心指导与帮助，以及广大文明6玩家的热情测试与游玩，我们齐心协力，共同创造文明6新的未来！[ENDCOLOR]</Text>
+		</Row>
+	<!--模组标题-->
+
+	<!--模組標題-->
+		<Row Tag="LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_NAME" Language="zh_Hant_HK">
+			<Text>[COLOR:ResGoldLabelCS]【未來已至】模塊化相鄰加成[ENDCOLOR]·[COLOR:PiratesButtonCS]核心[ENDCOLOR]</Text>
+		</Row>
+		<Row Tag="LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_TEASER" Language="zh_Hant_HK">
+			<Text>[COLOR:ResFaithLabelCS]本mod設計了一套全新的相鄰加成體系，除極端情況下，幾乎不會與任何mod發生衝突。[ENDCOLOR]</Text>
+		</Row>
+		<Row Tag="LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_DESCRIPTION" Language="zh_Hant_HK">
+			<Text>
+		[COLOR_FLOAT_CULTURE]
+		[ICON_New]本mod設計了一套全新的相鄰加成體系，除極端情況下，幾乎不會與任何mod發生衝突。
+		[ENDCOLOR]
+		[newline][newline]
+		[COLOR_FLOAT_SCIENCE]
+		[ICON_New]本mod新增了多種全新的相鄰加成，並且能夠復現原版所有可能的相鄰加成，在此基礎上，還能進行更為可控的拓展。相鄰類型包括但不限於：相鄰每段河流（區別於原版商業中心的僅一條河流），相鄰每位在崗公民（完全可以拓展專家崗位體系）。相鄰加成產出在原版6種產出的基礎上，還增加了住房、宜居、忠誠度、電力等廣義產出。同時，絕大部分對象都能作為相鄰加成：如建築、政策、科技市政、信仰等，而且能被二次發起：文明特質/領袖特質發起的由建築或其他對象進行二次發起。
+		[ENDCOLOR]
+		[newline][newline]
+		[COLOR_FLOAT_GOLD]
+		[ICON_New]感謝各位modder大佬/前人的耐心指導與幫助，以及廣大文明6玩家的熱情測試與遊玩，我們齊心協力，共同創造文明6新的未來！
+		[ENDCOLOR]
+			</Text>
+		</Row>
+	<!--模組標題-->
+
+	<!--MOD INFO-->
+		<Row Tag="LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_NAME" Language="en_US">
+			<Text>[COLOR:ResGoldLabelCS][Future is Now] Modular Adjacency Bonuses[ENDCOLOR] · [COLOR:PiratesButtonCS]Core[ENDCOLOR]</Text>
+		</Row>
+		<Row Tag="LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_TEASER" Language="en_US">
+			<Text>[COLOR:ResFaithLabelCS]This mod introduces a brand new adjacency bonus system that is compatible with almost all mods except in extreme cases.[ENDCOLOR]</Text>
+		</Row>
+		<Row Tag="LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_DESCRIPTION" Language="en_US">
+			<Text>
+		[COLOR_FLOAT_CULTURE]
+		[ICON_New]This mod introduces a brand new adjacency bonus system that is compatible with almost all mods except in extreme cases.
+		[ENDCOLOR]
+		[newline][newline]
+		[COLOR_FLOAT_SCIENCE]
+		[ICON_New]This mod adds a variety of new adjacency bonuses and can reproduce all possible adjacency bonuses from the vanilla game. On this basis, it allows for more controllable extensions. Adjacency types include but are not limited to: each adjacent River edge (distinct from the vanilla Commercial Hub's single river adjacency), each adjacent Citizen working a tile (fully expandable to a specialist system). Adjacency bonus yields include the 6 vanilla yields plus broader yields like Housing, Amenities, Loyalty, and Power. Additionally, most objects can serve as adjacency sources: Buildings, Policies, Technologies, Civics, Beliefs, etc., and can be re-triggered: e.g., a bonus from a Civilization/Leader Trait can be triggered again by a Building or other object.
+		[ENDCOLOR]
+		[newline][newline]
+		[COLOR_FLOAT_GOLD]
+		[ICON_New]Thanks to all the modder seniors/predecessors for their patient guidance and help, and to the vast number of Civ 6 players for their enthusiastic testing and playing. We work together to create a new future for Civ 6!
+		[ENDCOLOR]
+			</Text>
+		</Row>
+	<!--MOD INFO-->
+	
+	</LocalizedText>
+</GameData>

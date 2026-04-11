@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mod id="eaffc7c2-21d2-47e5-a060-ae55780d1337" version="1">
+  <Properties>
+    <Name>LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_NAME</Name>
+    <Description>LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_DESCRIPTION</Description>
+    <Created>1771830821</Created>
+    <Teaser>LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_TEASER</Teaser>
+    <Authors>MALIANG_RUIVO</Authors>
+    <CompatibleVersions>1.2,2.0</CompatibleVersions>
+  </Properties>
+
+  <LocalizedText>
+    <File>FRONTEND_TEXT.xml</File>
+  </LocalizedText>
+
+  <FrontEndActions>
+    <UpdateText id="Text">
+      <File>NEW_ADJACENCY_BONUS_BY_RUIVO_CORE_TEXT.xml</File>
+      <File>Localization/MAB_China_Taiwan.xml</File>
+      <File>Localization/MAB_en_US.xml</File>
+    </UpdateText>
+    <UpdateDatabase id="FrontEndLoad">
+      <File>FrontEndLoad.sql</File>
+    </UpdateDatabase>
+    <UpdateIcons id="ICONS">
+      <File>MAB_ICONS.xml</File>
+    </UpdateIcons>
+  </FrontEndActions>
+  <InGameActions>
+    <AddGameplayScripts id="GP">
+      <File>NEW_ADJACENCY_BONUS_BY_RUIVO_GP.lua</File>
+    </AddGameplayScripts>
+    <UpdateDatabase id="CREATE_TABLE">
+      <Properties>
+        <LoadOrder>-1</LoadOrder>
+      </Properties>
+      <File>NEW_ADJACENCY_BONUS_BY_RUIVO_CORE_TABLE.sql</File>
+      <File>MAB_CORE_TABLE_INFO.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="TRANVERSE_INSERT">
+      <Properties>
+        <LoadOrder>1919810</LoadOrder>
+      </Properties>
+      <File>NEW_ADJACENCY_BONUS_BY_RUIVO_CORE_INSERT.sql</File>
+    </UpdateDatabase>
+    <ImportFiles id="MODULES">
+      <File>RUIVO_STAT_MODULE_GP.lua</File>
+    </ImportFiles>
+    <UpdateText id="TEXT">
+      <File>NEW_ADJACENCY_BONUS_BY_RUIVO_CORE_TEXT.xml</File>
+      <File>Localization/MAB_China_Taiwan.xml</File>
+      <File>Localization/MAB_en_US.xml</File>
+    </UpdateText>
+    <ImportFiles id="ImportFiles_Common">
+      <Properties>
+        <LoadOrder>11</LoadOrder>
+      </Properties>
+      <File>UI/Common/AdjacencyBonusSupport.lua</File>
+    </ImportFiles>
+    <AddUserInterfaces id="UI">
+      <Properties>
+        <Context>InGame</Context>
+      </Properties>
+      <File>UI/RUIVO_MODULAR_UI.xml</File>
+    </AddUserInterfaces>
+    <ImportFiles id="UI Replacements import">
+      <File>UI/Loaders/ToolTipLoader_MAB.lua</File>
+    </ImportFiles>
+    <UpdateIcons id="ICONS">
+      <File>MAB_ICONS.xml</File>
+    </UpdateIcons>
+  </InGameActions>
+  <Files>
+    <File>FrontEndLoad.sql</File>
+    <File>FRONTEND_TEXT.xml</File>
+    <File>Localization/MAB_China_Taiwan.xml</File>
+    <File>Localization/MAB_en_US.xml</File>
+    <File>MAB_CORE_TABLE_INFO.sql</File>
+    <File>MAB_ICONS.xml</File>
+    <File>NEW_ADJACENCY_BONUS_BY_RUIVO_CORE_INSERT.sql</File>
+    <File>NEW_ADJACENCY_BONUS_BY_RUIVO_CORE_TABLE.sql</File>
+    <File>NEW_ADJACENCY_BONUS_BY_RUIVO_CORE_TEXT.xml</File>
+    <File>NEW_ADJACENCY_BONUS_BY_RUIVO_GP.lua</File>
+    <File>RUIVO_STAT_MODULE_GP.lua</File>
+    <File>UI/Common/AdjacencyBonusSupport.lua</File>
+    <File>UI/Loaders/ToolTipLoader_MAB.lua</File>
+    <File>UI/RUIVO_MODULAR_UI.lua</File>
+    <File>UI/RUIVO_MODULAR_UI.xml</File>
+    <File>标准写法.sql</File>
+    <File>模块化相邻加成教程-tutorial.md</File>
+  </Files>
+</Mod>
