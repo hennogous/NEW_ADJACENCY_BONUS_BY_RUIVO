@@ -1,12 +1,12 @@
 # RUIVO's Modular Adjacency Bonus Tutorial
 
-## Foreword
+## 1.1. Foreword
 
 This tutorial introduces how to use the **Modular Adjacency Bonus (MAB)** system provided by this mod. This system allows you to add rich and dynamic adjacency bonuses to districts through simple SQL table insertion statements. It supports various dimensions including plot, district, city, player, and global game states. It also supports generalized bonuses such as Housing and Amenities, beyond the 6 basic yields. Furthermore, this mod is fully capable of reproducing all adjacency bonuses in Civilization VI.
 
 In most cases, this mod will not conflict with any other mods, unless they intentionally use the same variable names or write incorrect code based on this mod. However, UI compatibility is still TBD, as the Civilization VI code framework dictates that mods modifying the UI will often conflict.
 
-## Acknowledgments
+## 1.2. Acknowledgments
 
 Special thanks to all modders exploring Lua, such as Hemmelfort, Maple Leaves, Uni, Pen, Ophidy, and the high-quality mods from many others, which allowed me to quickly accumulate experience to complete this tutorial. [1] This sentence is adapted from the acknowledgments in [SiQi's Tutorial](https://github.com/SiQi-1/Siqi-mod--/blob/main/Siqi%E7%9A%84%E6%96%87%E6%98%8E6mod%E6%95%99%E7%A8%8B.md).
 
@@ -16,7 +16,7 @@ In short, standing on the shoulders of giants, thanks to the support of many Civ
 
 Author: Ruivo
 
-# Prerequisite Knowledge
+# 2. Prerequisite Knowledge
 
 To use the Modular Adjacency Bonus System (MAB), you need to know how to create mods. Please refer to the following tutorials:
 
@@ -40,13 +40,13 @@ Finally, if you want to check if this mod is enabled, check the **RUIVO_MODULAR_
 
 PS: Do not create SQL files in the Civ VI Development Tool; they will fail. It's best to use an editor like VS Code. You can also copy and clear this mod's SQL files for your own use.
 
-# Adjacency Bonus Implementation Tutorial
+# 3. Adjacency Bonus Implementation Tutorial
 
-## Basics
+## 3.1. Basics
 
 Standard Civ VI adjacency bonuses are quite limited, only covering "Districts," "Resources," "Improvements," and "Features." Even the Commercial Hub's "Adjacent to a River" feels unique. But with so many plot attributes available, why not use them? This mod enables extremely diverse methods.
 
-### Example: Commercial Hub gets Gold from each adjacent River segment
+### 3.1.1. Example: Commercial Hub gets Gold from each adjacent River segment
 
 Let's try an idea: **Commercial Hub gets +1 Gold from each adjacent river segment**. Since a river can have multiple segments, why only give a bonus for being "adjacent to a river" once? Look at this code ↓:
 
@@ -68,17 +68,17 @@ After adding this, it works! Now the Commercial Hub receives a bonus from every 
 
 Now let's analyze the parameters. Unless customizing, all operations revolve around the **Ruivo_New_Adjacency** table.
 
-#### Parameter: ID (Unique Identifier)
+#### 3.1.1.1. Parameter: ID (Unique Identifier)
 
 ID is the unique identifier and **Primary Key** of the table. It's recommended to follow the naming convention "YourName_DistrictName_YieldName_AdjacencySource." If you're confident it won't conflict, any name works, even "abcd."
 
 Note: These must be in English!
 
-#### Parameter: DistrictType
+#### 3.1.1.2. Parameter: DistrictType
 
 The district the adjacency bonus applies to. This must be a `DistrictType` defined in the `Districts` table. Standard, modded, custom, or unique districts all work!
 
-#### Parameter: YieldType
+#### 3.1.1.3. Parameter: YieldType
 
 Without a `ProvideType`, the `YieldType` must be one of the 6 standard yields defined in the `Yields` table:
 
@@ -93,7 +93,7 @@ Without a `ProvideType`, the `YieldType` must be one of the 6 standard yields de
 
 But `YieldType` is much more than this! More exciting content follows! See the `Ruivo_ProvideType_YieldType` table or the [ProvideType-YieldType Table Reference](./refer_table-参考表/Ruivo_ProvideType_YieldType.xlsx).
 
-#### Parameter: YieldChange (Bonus per Unit)
+#### 3.1.1.4. Parameter: YieldChange (Bonus per Unit)
 
 The **bonus value provided by each adjacent object**. For example, +1, +2, or +3 per river segment.
 
@@ -101,7 +101,7 @@ Decimals are supported! This is better than the original game. Note that values 
 
 Also, each yield type is calculated independently; two different bonuses of +0.5 will not stack to +1. I haven't found a solution for this yet (as of 2026.4.8).
 
-#### Parameter: AdjacencyType
+#### 3.1.1.5. Parameter: AdjacencyType
 
 Defines the **source of the bonus**, i.e., what object/attribute the district gets its bonus from. This is the soul of this mod!
 
@@ -113,7 +113,7 @@ It's too long to screenshot; check the database or the [Adjacency Type Table Ref
 * `CanDisplay` controls "visibility in the UI." Since religious adjacency sources haven't found a good display method yet, this parameter is currently reserved (as of 2026.4.8).
 * `Tooltip` explains the adjacency source. Currently only in Chinese; use AI translation for now.
 
-#### Parameter: DistrictModifiers (Enable Bonus)
+#### 3.1.1.6. Parameter: DistrictModifiers (Enable Bonus)
 
 Controls **whether to enable this adjacency bonus**. Boolean, 0 or 1:
 
@@ -123,7 +123,7 @@ Controls **whether to enable this adjacency bonus**. Boolean, 0 or 1:
 
 Since traits can now be formal sources, just fill in 1 unless you have stacking needs!
 
-#### Parameter: ApplyForUniqueDistricts
+#### 3.1.1.7. Parameter: ApplyForUniqueDistricts
 
 Controls **whether the bonus applies to unique districts**. Boolean, 0 or 1:
 
@@ -133,7 +133,7 @@ Controls **whether the bonus applies to unique districts**. Boolean, 0 or 1:
 
 Unique district mappings are defined in the `DistrictReplaces` table; the mod matches them automatically. If writing for a unique district directly, ignore this (defaults to 0).
 
-### Example: Theater Square gets Culture from City Amenities
+### 3.1.2. Example: Theater Square gets Culture from City Amenities
 
 Just for parameter demonstration:
 
@@ -147,7 +147,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775655597748](image/tutorial_images/1775655597748.png)
 
-#### Parameter: Only (Human/AI Target)
+#### 3.1.2.1. Parameter: Only (Human/AI Target)
 
 Controls **who the bonus applies to** (Human or AI players).
 
@@ -159,7 +159,7 @@ Supports three strings, default is 'Human&AI':
 
 In most cases, leave this blank.
 
-### Example: Campus gets unconditional +1 Science
+### 3.1.3. Example: Campus gets unconditional +1 Science
 
 Just for parameter demonstration:
 
@@ -173,7 +173,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775656025569](image/tutorial_images/1775656025569.png)
 
-#### Parameter: NewMethod
+#### 3.1.3.1. Parameter: NewMethod
 
 Selects the **binding method for the district bonus**, either Old or New, to solve AI district placement bias.
 
@@ -187,9 +187,9 @@ This was created because a modder noted AI wouldn't build certain districts. Unf
 
 (Firaxis, what kind of code is this? I'll make you fly!)
 
-## Advanced
+## 3.2. Advanced
 
-### Example: Entertainment Complex gets Amenities from adjacent districts
+### 3.2.1. Example: Entertainment Complex gets Amenities from adjacent districts
 
 Here, I'll reveal the charm of modular adjacency:
 
@@ -203,7 +203,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775656754251](image/tutorial_images/1775656754251.png)
 
-#### Parameter: ProvideType
+#### 3.2.1.1. Parameter: ProvideType
 
 Defines the **delivery method of the bonus, corresponding to a unique `ModifierType`**. Determines the bonus type (base yield, percentage multiplier, Housing/Amenities, etc.). **Must be used with a compatible `YieldType`!**
 
@@ -229,7 +229,7 @@ Includes: Air Slots, City Growth Speed, District Slots, Trade Capacity, Housing,
 
 Additionally, this mod supports the **Property** system. Providing properties and using them as sources gives this mod incredible flexibility!
 
-### Example: Industrial Zone gets Great Engineer Points from City Production
+### 3.2.2. Example: Industrial Zone gets Great Engineer Points from City Production
 
 Industrial Zone gets Great Engineer points based on the city's Production. Note that `YieldType` and `CustomAdjacentObject` depend on their `ProvideType` and `AdjacencyType`:
 
@@ -244,7 +244,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775874976118](image/tutorial_images/1775874976118.png)
 
-#### Parameter: CustomAdjacentObject
+#### 3.2.2.1. Parameter: CustomAdjacentObject
 
 Specifies the **target for AdjacencyTypes that require a custom object**, such as specific resources, resource classes, terrains, etc.
 
@@ -265,7 +265,7 @@ How to fill it depends on your "Civ VI common sense," for example:
 
 For property-based sources, `CustomAdjacentObject` should be the property key name. For standard yields, use 'yield'.
 
-### Example: Preserve gets Housing from National Parks within 2 rings
+### 3.2.3. Example: Preserve gets Housing from National Parks within 2 rings
 
 ```sql
 -- Preserve gets Housing from National Parks within 2 rings
@@ -278,7 +278,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775878237062](image/tutorial_images/1775878237062.png)
 
-#### Parameter: Rings (Multi-ring Adjacency)
+#### 3.2.3.1. Parameter: Rings (Multi-ring Adjacency)
 
 Defines the **number of rings for the adjacency bonus**. Only applies to `AdjacencyTypes` with the `RINGS` tag.
 
@@ -288,7 +288,7 @@ Defines the **number of rings for the adjacency bonus**. Only applies to `Adjace
 
 Non-RINGS types ignore this parameter.
 
-### Example: Harbor gets Gold from "Gold Resources" within 3 rings
+### 3.2.4. Example: Harbor gets Gold from "Gold Resources" within 3 rings
 
 ```sql
 -- Harbor gets Gold from gold-type resources within 3 rings
@@ -301,7 +301,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775879514177](image/tutorial_images/1775879514177.png)
 
-### Example: Theater gets Gold from Luxury Resources within 2 rings (Magnificence Catherine)
+### 3.2.5. Example: Theater gets Gold from Luxury Resources within 2 rings (Magnificence Catherine)
 
 Method 1 (Note `DistrictModifiers` is 0):
 
@@ -316,7 +316,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775880864130](image/tutorial_images/1775880864130.png)
 
-#### Parameter: TraitType
+#### 3.2.5.1. Parameter: TraitType
 
 Binds the adjacency bonus to a **specific trait** (Civ or Leader). The bonus only works if the trait is active.
 
@@ -324,7 +324,7 @@ Default is NULL. Custom value: `TraitType` from the `Traits` table.
 
 This has mostly been replaced by `ModifierOwner`, unless you need to stack traits with other sources. If used, `DistrictModifiers` must be 0.
 
-### Example: Theater gets Gold from Luxury Resources within 2 rings (Magnificence Catherine)
+### 3.2.6. Example: Theater gets Gold from Luxury Resources within 2 rings (Magnificence Catherine)
 
 Method 2 (Note `DistrictModifiers` is 1):
 
@@ -339,7 +339,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775881303326](image/tutorial_images/1775881303326.png)
 
-#### Parameter: ModifierOwner
+#### 3.2.6.1. Parameter: ModifierOwner
 
 Defines the **initiator of the modifier**, i.e., what object triggers the bonus (District, Tech, Building, Policy Card). Refer to the `Ruivo_ModifierOwner_CollectionType` table.
 
@@ -359,11 +359,11 @@ Note: Governor promotion series currently has bugs (as of 2026.4.11).
 | GovernorPromotionModifiers | GovernorPromotionType | COLLECTION_CITY_DISTRICTS   | Governor promotion affects city districts. Find in `GovernorPromotions` table.                                |
 | GovernorPromotionModifiers | GovernorPromotionType | COLLECTION_PLAYER_DISTRICTS | Governor promotion affects all player districts. Find in `GovernorPromotions` table.                         |
 
-#### Parameter: WhoIsTheOwner
+#### 3.2.6.2. Parameter: WhoIsTheOwner
 
 Defines the **specific object of the initiator**, e.g., which Tech/Building/Policy triggers the bonus. Strongly bound to `ModifierOwner`.
 
-#### Parameter: CollectionType
+#### 3.2.6.3. Parameter: CollectionType
 
 Defines the **scope of the modifier's target collection**, i.e., which districts are affected: City or Player. Core values:
 
@@ -373,11 +373,11 @@ Defines the **scope of the modifier's target collection**, i.e., which districts
 | COLLECTION_CITY_DISTRICTS   | All districts in a city | City-wide bonuses from buildings/governors.   |
 | COLLECTION_ALL_DISTRICTS    | All districts in game | Global bonuses from beliefs/pantheons.        |
 
-## Customization
+## 3.3. Customization
 
 From this section, we'll operate on tables beyond `Ruivo_New_Adjacency`.
 
-### Example: Modifying Tooltip Text - Campus gets +0.3 Great Scientist Points from each adjacent Mountain
+### 3.3.1. Example: Modifying Tooltip Text - Campus gets +0.3 Great Scientist Points from each adjacent Mountain
 
 Tooltip text for each ID can be replaced:
 
@@ -409,7 +409,7 @@ Then provide the localization:
 
 ![1775898293503](image/tutorial_images/1775898293503.png)
 
-#### Table: Ruivo_New_Adjacency_Text
+#### 3.3.1.1. Table: Ruivo_New_Adjacency_Text
 
 Configures UI tooltip text for each bonus rule in the core table.
 
@@ -428,7 +428,7 @@ Placeholders (order is fixed):
 + {3_AdjacentSubjectNum}: Number of adjacent objects.
 + {4_CAO}: Custom adjacent object.
 
-### Example: Custom Object - Entertainment Complex gets Amenities from custom tag resource group
+### 3.3.2. Example: Custom Object - Entertainment Complex gets Amenities from custom tag resource group
 
 Using resource tag groups:
 
@@ -472,7 +472,7 @@ Localization:
 
 ![1775899577629](image/tutorial_images/1775899577629.png)
 
-#### Table: Ruivo_CAO (Custom Adjacent Object Text Table)
+#### 3.3.2.1. Table: Ruivo_CAO (Custom Adjacent Object Text Table)
 
 Example entries:
 
@@ -503,7 +503,7 @@ INSERT INTO Ruivo_CAO (CustomAdjacentObject, Name) VALUES
 
 Actually, this table isn't strictly necessary as you can achieve the same via `Tooltip` replacement.
 
-### Example: Custom Yield Type - [Medical District](https://steamcommunity.com/sharedfiles/filedetails/?id=3483460357) Healing Aura
+### 3.3.3. Example: Custom Yield Type - [Medical District](https://steamcommunity.com/sharedfiles/filedetails/?id=3483460357) Healing Aura
 
 Example code from [Enhanced Medical District](https://steamcommunity.com/sharedfiles/filedetails/?id=3656529825). Note that this mod separates UI display from actual mechanics.
 
@@ -557,7 +557,7 @@ Localization:
 
 ![1775900810512](image/tutorial_images/1775900810512.png)
 
-#### Table: Ruivo_Yield_IconString (Custom Yield Display Table)
+#### 3.3.3.1. Table: Ruivo_Yield_IconString (Custom Yield Display Table)
 
 Configures UI display for custom `YieldTypes`.
 
@@ -572,7 +572,7 @@ INSERT INTO Ruivo_Yield_IconString (YieldType, Name, IconString, TextColor, AddP
 + TextColor: Standard color like `[COLOR_GREEN]` or custom RGB `[COLOR:255,255,255,255]`.
 + AddPercentChar: 0 = No, 1 = Yes.
 
-### Example: Custom Provide Type - [Light Industrial Zone](https://steamcommunity.com/sharedfiles/filedetails/?id=3489161598) Builder and Trader Production Acceleration
+### 3.3.4. Example: Custom Provide Type - [Light Industrial Zone](https://steamcommunity.com/sharedfiles/filedetails/?id=3489161598) Builder and Trader Production Acceleration
 
 We have a new parameter `CustomArgumentValue` because a single `ArgumentName` might have multiple uses. We must distinguish `CustomArgumentValue` from `YieldType`.
 
@@ -613,7 +613,7 @@ Localization:
 
 ![1775901497767](image/tutorial_images/1775901497767.png)
 
-#### Table: Ruivo_New_Adjacency_ProvideType
+#### 3.3.4.1. Table: Ruivo_New_Adjacency_ProvideType
 
 Defines a new `ProvideType` and its associated modifier effect.
 
@@ -626,13 +626,13 @@ INSERT INTO Ruivo_New_Adjacency_ProvideType (ProvideType, ModifierType, Argument
 * ModifierType: The modifier effect. Since it's attached to districts, your `COLLECTION` scope should reflect district attributes.
 * ArgumentName: Used when a special field is needed in `ModifierArguments`. Usually defaults to `Amount`. `CustomArgumentValue` is automatically inserted into this field.
 
-#### Parameter: CustomArgumentValue
+#### 3.3.4.2. Parameter: CustomArgumentValue
 
 This is a product of legacy code compatibility. To maintain UI compatibility when using custom modifiers (non-property) with arguments other than `Amount`, you need to specify the target here separately from `YieldType`.
 
 Example: We define `UNIT_BUILDER_ACCELERATION` as a new yield, but in `Ruivo_New_Adjacency`, we still need to specify `UNIT_BUILDER` as the actual `UnitType`.
 
-### Example: FreeCompose Mode - Harbor providing Fishing Range
+### 3.3.5. Example: FreeCompose Mode - Harbor providing Fishing Range
 
 A complex example of `FreeCompose` mode:
 
@@ -655,7 +655,7 @@ A complex example of `FreeCompose` mode:
     -- [Omitted for brevity, refer to Chinese tutorial for full SQL]
 ```
 
-#### Parameter: FreeCompose
+#### 3.3.5.1. Parameter: FreeCompose
 
 Enables **FreeCompose Mode**, an advanced feature for non-standard bonuses. When enabled, only the Lua-side property data (and plot requirements) are kept. Boolean, 0 or 1:
 
@@ -664,7 +664,7 @@ Enables **FreeCompose Mode**, an advanced feature for non-standard bonuses. When
 
 This was intended for new modifier needs, but with `ProvideType` customization and property systems, it's mostly used for niche scenarios now.
 
-#### Note: Lua-side statistical properties on the district's plot
+#### 3.3.5.2. Note: Lua-side statistical properties on the district's plot
 
 If you want to use the statistical data left by a district on its plot in SQL or Lua, use these properties:
 
@@ -680,7 +680,7 @@ local ActualAmountKey = ID .. '_ACTUAL_AMOUNT'
 
 The key name is your adjacency rule's ID plus the suffix.
 
-### Example: FreeCompose Mode - Spaceport Project Acceleration by Latitude
+### 3.3.6. Example: FreeCompose Mode - Spaceport Project Acceleration by Latitude
 
 Old implementation, now achievable via custom `ProvideType`:
 
@@ -708,7 +708,7 @@ Old implementation, now achievable via custom `ProvideType`:
     'DISTRICT_SPACEPORT',   'ShowFreeComposeYield', 'SpaceRaceProduction',  1,              'FROM_LATITUDE',    1,                  0,          1,                       1);
 ```
 
-### Example: Property as Adjacency Source - Holy Site cascading bonus
+### 3.3.7. Example: Property as Adjacency Source - Holy Site cascading bonus
 
 `FROM PROPERTY` series don't have built-in tooltip translations; replacement is required:
 
@@ -730,13 +730,13 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775909832249](image/tutorial_images/1775909832249.png)
 
-### Example: Providing Property as Bonus - [Millennium Campus](https://steamcommunity.com/sharedfiles/filedetails/?id=3671918017)
+### 3.3.8. Example: Providing Property as Bonus - [Millennium Campus](https://steamcommunity.com/sharedfiles/filedetails/?id=3671918017)
 
 [Refer to Chinese tutorial for full SQL implementation]
 
 ![1775910132109](image/tutorial_images/1775910132109.png)
 
-# Conclusion
+# 4. Conclusion
 
 That's all for now. Class dismissed!
 

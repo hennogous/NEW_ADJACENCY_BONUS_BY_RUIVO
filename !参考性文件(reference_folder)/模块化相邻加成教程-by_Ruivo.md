@@ -1,12 +1,12 @@
 # RUIVO的模块化相邻加成教程
 
-## 前言
+## 1.1. 前言
 
 本教程将介绍如何使用**模块化相邻加成** 模组提供的相邻加成系统。该系统可以通过简单的 SQL 插入表语句，为区域添加丰富和动态的相邻加成，包括单元格 plot 、区域 district 、城市 city 、玩家 player 、全局状态 game 等各种维度，同时也支持包括住房、宜居度等在内的广义上的加成，而不止于简单的6种基础加成，此外，本mod完全有能力复现文明6所有相邻加成。
 
 本mod在极大多数情况下不会与任何mod发生冲突，除非有意与本mod使用同样的变量名或者基于本mod编写错误的代码，不过在UI兼容上还待定，因为文明6的代码框架注定了在UI界面上的修改的mod会互相打架。
 
-## 致谢
+## 1.2. 致谢
 
 特别感谢所有在lua方面进行探索的modder，比如Hemmelfort、枫叶、优妮、Pen、Ophidy，以及大量modder的优质mod，让我迅速累积了大量经验来完成本教程。[1]这句话来自[糸七大佬的教程](https://github.com/SiQi-1/Siqi-mod--/blob/main/Siqi%E7%9A%84%E6%96%87%E6%98%8E6mod%E6%95%99%E7%A8%8B.md)的致谢。
 
@@ -16,7 +16,7 @@
 
 作者：Ruivo
 
-# 前置知识
+# 2. 前置知识
 
 首先，想使用模块化相邻加成系统（Modular Adjacency Bonus System，简称MAB），你得会写mod，这个请参考以下教程：
 
@@ -40,13 +40,13 @@
 
 PS：不要在文明6 develop tool 里新建 sql 文件，会失效，最好下个类似 VScode 的编辑器去创建一个 sql 文件，当然你直接把本mod 的 sql 文件复制+清空拿去用也行。
 
-# 相邻加成实例写法教程
+# 3. 相邻加成实例写法教程
 
-## 基础
+## 3.1. 基础
 
 我们知道，文明6原版的相邻加成非常贫瘠，只有相邻“区域”“资源”“改良”“地貌”等很平常的方法，甚至连商业中心的“相邻一条河流”都显得有些特色了，但是，明明有那么多可作为加成的单元格属性，为什么不能拿来用呢，那么，本mod可以实现极为丰富的方法。
 
-### 示例-商业中心从相邻每段河流获得金币加成
+### 3.1.1. 示例-商业中心从相邻每段河流获得金币加成
 
 话不多说，我们先来试一个想法：**商业中心从相邻每段河流+1金币** ，因为河流明明有好几段，怎么能因为就相邻一条河流就给点加成呢？看看这一段代码↓：
 
@@ -68,17 +68,17 @@ INSERT INTO Ruivo_New_Adjacency
 
 好的，接下来我们来分析参数：在不涉及自定义的情况下，我们所有的操作均围绕 **Ruivo_New_Adjacency** 表进行
 
-#### 参数: ID 唯一标识
+#### 3.1.1.1. 参数: ID 唯一标识
 
 首先， ID 是唯一标识符，表的**主键**，建议命名规范为 “你自己的名字_区域名称_产出名称_相邻来源”，当然如果你有自信不会和别人撞车的话，起名随你如意即可。你要嫌长写个abcd进去都行。
 
 但是请注意，这些填入的必须都是英文！
 
-#### 参数: DistrictType 区域类型
+#### 3.1.1.2. 参数: DistrictType 区域类型
 
 相邻加成作用的区域，填啥东西，但是区域一定是来自 Districts 这张表的定义的 DistrictType ，你填原本区域、mod区域，自己加的区域、特色区域，只要是区域，都行！
 
-#### 参数: YieldType 产出类型
+#### 3.1.1.3. 参数: YieldType 产出类型
 
 在不填 ProvideType 的情况下， 你填入的 YieldType 必须来自于 Yields 表定义的原版6种产出，也就是：
 
@@ -93,7 +93,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 但是我必须告诉你的是： YieldType 不止于此，后面还有更劲爆的内容！！详见 Ruivo_ProvideType_YieldType 表，这个表也位于[提供类型-产出类型表](./refer_table-参考表/Ruivo_ProvideType_YieldType.xlsx)。
 
-#### 参数: YieldChange 每单位加成量
+#### 3.1.1.4. 参数: YieldChange 每单位加成量
 
 每个**相邻对象提供的加成数值** ，即单位相邻来源对应的产出量，比如每相邻1段河+1 +2 +3 都可以写。
 
@@ -101,7 +101,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 而且同一产出类型是独立计算的，也就是两条不同的加成不会因为都提供 0.5 而叠加为1，这个很可惜，我暂时没有想到解决的办法，也许以后有方法吧（2026.4.8）
 
-#### 参数: AdjacencyType 相邻来源类型
+#### 3.1.1.5. 参数: AdjacencyType 相邻来源类型
 
 定义**加成的相邻来源**，即区域从「什么对象/属性」获得加成，是本模组的灵魂！也是第一个重头戏！
 
@@ -113,7 +113,7 @@ INSERT INTO Ruivo_New_Adjacency
 * CanDisplay 参数是“能否显示在UI”，因为宗教系列的相邻来源目前没能找到好的方法去显示，所以这个参数暂时保留了（2026.4.8）
 * Tooltip只是告诉你这个是什么相邻来源的意思，我只写了中文，老外自己拿AI翻译看看吧。
 
-#### 参数: DistrictModifiers 是否启用此相邻加成
+#### 3.1.1.6. 参数: DistrictModifiers 是否启用此相邻加成
 
 控制**是否启用本条相邻加成**。布尔值，仅支持 0 或  1 ：
 
@@ -123,7 +123,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 但是现在 trait 能作为正式的来源了，所以无脑填1就对了！除非你有叠加的需要。
 
-#### 参数: ApplyForUniqueDistricts 是否作用于特色区域
+#### 3.1.1.7. 参数: ApplyForUniqueDistricts 是否作用于特色区域
 
 控制**加成规则是否应用到文明的特色区域**。布尔值，仅支持 0 或 1 ：
 
@@ -133,7 +133,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 特色区域与基础区域的对应关系由游戏 DistrictReplaces 表定义，模组会自动匹配，无需手动指定。在你写给特色区域的时候就不管这个参数就行了，因为默认为0。
 
-### 示例-剧院广场从城市宜居度获得文化加成
+### 3.1.2. 示例-剧院广场从城市宜居度获得文化加成
 
 只是拿来演示一下参数的：
 
@@ -147,7 +147,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775655597748](image/tutorial_images/1775655597748.png)
 
-#### 参数: Only 作用于人类/AI
+#### 3.1.2.1. 参数: Only 作用于人类/AI
 
 控制相邻**加成的生效对象**，分为人类玩家和AI玩家。
 
@@ -159,7 +159,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 大部分情况下不填这个参数。
 
-### 示例-学院无条件+1科技值
+### 3.1.3. 示例-学院无条件+1科技值
 
 只是演示参数用的：
 
@@ -173,7 +173,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775656025569](image/tutorial_images/1775656025569.png)
 
-#### 参数: NewMethod 是否启用新的方法
+#### 3.1.3.1. 参数: NewMethod 是否启用新的方法
 
 选择**区域加成的绑定方式**，分为旧方法和新方法，解决AI建造区域的倾向问题。
 
@@ -187,9 +187,9 @@ INSERT INTO Ruivo_New_Adjacency
 
 （F社你写的什么几把代码，我让你飞起来）
 
-## 进阶
+## 3.2. 进阶
 
-### 示例-娱乐中心从相邻区域获得宜居度加成
+### 3.2.1. 示例-娱乐中心从相邻区域获得宜居度加成
 
 从这里开始，我将向你揭示模块化相邻的魅力：
 
@@ -203,7 +203,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775656754251](image/tutorial_images/1775656754251.png)
 
-#### 参数: ProvideType 提供类型
+#### 3.2.1.1. 参数: ProvideType 提供类型
 
 定义**加成的提供方式，对应了唯一的一个 ModifierType**，决定加成（如基础产出、百分比系数、住房/宜居度等），**必须与YieldType配套使用！**
 
@@ -229,7 +229,7 @@ FROM Ruivo_ProvideType_YieldType;
 
 除此之外，本mod还支持property体系，这个我们会在后面的示例中学习到，提供property，以property作为来源，会让这个模组达到惊人的自由度！
 
-### 示例-工业区从本城“生产力”获得“大工程师点数”加成
+### 3.2.2. 示例-工业区从本城“生产力”获得“大工程师点数”加成
 
 工业区从本城的“生产力”获得大工程师点数，注意，YieldType 和 CustomAdjacentObject 要填入的内容取决于其 ProvideType 和 AdjacencyType：
 
@@ -244,7 +244,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775874976118](image/tutorial_images/1775874976118.png)
 
-#### 参数: CustomAdjacentObject 指定/自定义相邻对象
+#### 3.2.2.1. 参数: CustomAdjacentObject 指定/自定义相邻对象
 
 为**需要自定义相邻对象的AdjacencyType**指定具体目标，如指定资源类型、资源类别、地形等。
 
@@ -265,7 +265,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 除此之外，property 系的相邻来源的 CustomAdjacentObject 应该填写你需要的 property key 的名称，然后诸如 yield 6大产出一类的就填 yield 即可。
 
-### 示例-保护区从相邻2环国家公园获得住房加成
+### 3.2.3. 示例-保护区从相邻2环国家公园获得住房加成
 
 ```sql
 --保护区从相邻2环内的国家公园获得“住房加成”
@@ -278,7 +278,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775878237062](image/tutorial_images/1775878237062.png)
 
-#### 参数: Rings 多环相邻
+#### 3.2.3.1. 参数: Rings 多环相邻
 
 定义**相邻加成的环数**，仅对带有 RINGS 标识的 AdjacencyType 生效。
 
@@ -288,7 +288,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 非RINGS类型的 AdjacencyType 会忽略此参数，即使填写也无效果，保持默认值1即可。
 
-### 示例-港口从相邻3环“金币类资源”获得金币加成
+### 3.2.4. 示例-港口从相邻3环“金币类资源”获得金币加成
 
 ```sql
 --港口从相邻3环内的金币类资源获得“金币加成”
@@ -301,7 +301,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775879514177](image/tutorial_images/1775879514177.png)
 
-### 示例-剧院从相邻2环内的奢侈资源获得金币加成（寻欢作乐的凯瑟琳）
+### 3.2.5. 示例-剧院从相邻2环内的奢侈资源获得金币加成（寻欢作乐的凯瑟琳）
 
 第一种写法，注意这里 DistrictModifiers 填0：
 
@@ -316,7 +316,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775880864130](image/tutorial_images/1775880864130.png)
 
-#### 参数: TraitType 特质
+#### 3.2.5.1. 参数: TraitType 特质
 
 将相邻加成**绑定到指定的特质**（文明/领袖特质），仅当特质生效时，加成才有效。
 
@@ -324,7 +324,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 此参数**已基本被ModifierOwner替代**，除非你想把特质和其他来源叠加使用；若填写此参数，必须将 DistrictModifiers 设为0，否则无效。
 
-### 示例-剧院从相邻2环内的奢侈资源获得金币加成（寻欢作乐的凯瑟琳）
+### 3.2.6. 示例-剧院从相邻2环内的奢侈资源获得金币加成（寻欢作乐的凯瑟琳）
 
 第二种写法，注意这里 DistrictModifiers 填1：
 
@@ -339,7 +339,7 @@ INSERT INTO Ruivo_New_Adjacency
 
 ![1775881303326](image/tutorial_images/1775881303326.png)
 
-#### 参数: ModifierOwner 相邻加成发起者
+#### 3.2.6.1. 参数: ModifierOwner 相邻加成发起者
 
 定义**加成Modifier的发起者**，即加成由「什么对象」触发（如区域、科技、建筑、政策卡）。参考模组 Ruivo_ModifierOwner_CollectionType 表，
 
@@ -359,11 +359,11 @@ INSERT INTO Ruivo_New_Adjacency
 | GovernorPromotionModifiers | GovernorPromotionType | COLLECTION_CITY_DISTRICTS   | 总督升级作用于所属城市区域，请去 GovernorPromotions 表里找                                                     |
 | GovernorPromotionModifiers | GovernorPromotionType | COLLECTION_PLAYER_DISTRICTS | 总督升级作用于玩家所有区域，请去 GovernorPromotions 表里找                                                     |
 
-#### 参数: WhoIsTheOwner 发起对象
+#### 3.2.6.2. 参数: WhoIsTheOwner 发起对象
 
 定义**Modifier发起者的具体对象**，即哪个科技/建筑/政策卡触发加成，与 ModifierOwner 强绑定。
 
-#### 参数: CollectionType 作用范围
+#### 3.2.6.3. 参数: CollectionType 作用范围
 
 定义**加成Modifier的作用对象集合**，即加成作用于哪些区域级别：城市/玩家。参考模组 Ruivo_ModifierOwner_CollectionType 表，核心常用值如下：
 
@@ -373,11 +373,11 @@ INSERT INTO Ruivo_New_Adjacency
 | COLLECTION_CITY_DISTRICTS   | 某城市的所有区域   | 建筑/总督触发的城市内加成 |
 | COLLECTION_ALL_DISTRICTS    | 所有文明的所有区域 | 信仰/万神殿触发的全局加成 |
 
-## 自定义
+## 3.3. 自定义
 
 从本节开始，我们需要操作的表便不止于 Ruivo_New_Adjacency
 
-### 示例-修改浮动文本-学院从2环内每座山脉+0.3大科学家点数
+### 3.3.1. 示例-修改浮动文本-学院从2环内每座山脉+0.3大科学家点数
 
 实际上，每个ID对应的浮动文本是可以修改的，实际上是替换：
 
@@ -409,7 +409,7 @@ VALUES
 
 ![1775898293503](image/tutorial_images/1775898293503.png)
 
-#### 数据表:  Ruivo_New_Adjacency_Text 浮动文本替换表
+#### 3.3.1.1. 数据表:  Ruivo_New_Adjacency_Text 浮动文本替换表
 
 为核心表的每条加成规则配置UI提示文本，让玩家在游戏中看到加成的说明。
 
@@ -428,7 +428,7 @@ INSERT INTO Ruivo_New_Adjacency_Text (ID, Tooltip, AddPercentChar) VALUES
 + {3_AdjacentSubjectNum}：相邻对象数量
 + {4_CAO}：自定义相邻对象
 
-### 示例-定义自定义对象-娱乐中心从自定义tag类别资源获得宜居度加成
+### 3.3.2. 示例-定义自定义对象-娱乐中心从自定义tag类别资源获得宜居度加成
 
 我们使用定义资源组tag的方法：
 
@@ -472,7 +472,7 @@ INSERT INTO Ruivo_CAO
 
 ![1775899577629](image/tutorial_images/1775899577629.png)
 
-#### 数据表: Ruivo_CAO 自定义相邻对象文本替换表
+#### 3.3.2.1. 数据表: Ruivo_CAO 自定义相邻对象文本替换表
 
 大概长这样：
 
@@ -513,7 +513,7 @@ INSERT INTO Ruivo_CAO (CustomAdjacentObject, Name) VALUES
 
 实际上这个表没多大用，你完全可以通过前面那个Tooltip修改来实现。
 
-### 示例-自定义产出类型-[医疗区](https://steamcommunity.com/sharedfiles/filedetails/?id=3483460357)提供治疗光环
+### 3.3.3. 示例-自定义产出类型-[医疗区](https://steamcommunity.com/sharedfiles/filedetails/?id=3483460357)提供治疗光环
 
 使用例代码来自[增强医疗区](https://steamcommunity.com/sharedfiles/filedetails/?id=3656529825)，其他参数的填法请参考前文，这里的填法并不标准，只是演示自定义产出类型而已，而且注意，本模组实际上是把UI显示和实际生效分开的，也就是显示归显示，生效归生效。
 
@@ -567,7 +567,7 @@ INSERT INTO Ruivo_CAO (CustomAdjacentObject, Name) VALUES
 
 ![1775900810512](image/tutorial_images/1775900810512.png)
 
-#### 数据表: Ruivo_Yield_IconString 自定义产出显示表
+#### 3.3.3.1. 数据表: Ruivo_Yield_IconString 自定义产出显示表
 
 为自定义 YieldType 配置UI显示效果，包括产出图标、名称、字体颜色、是否加百分比符号。
 
@@ -582,7 +582,7 @@ INSERT INTO Ruivo_Yield_IconString (YieldType, Name, IconString, TextColor, AddP
 + TextColor：字体颜色，支持游戏内置颜色 [COLOR_GREEN]（绿色）或自定义 RGB [COLOR:255,255,255,255]
 + AddPercentChar：是否加百分比符号
 
-### 示例-自定义提供类型-[轻工业区](https://steamcommunity.com/sharedfiles/filedetails/?id=3489161598)获得建造者和商人生产加速
+### 3.3.4. 示例-自定义提供类型-[轻工业区](https://steamcommunity.com/sharedfiles/filedetails/?id=3489161598)获得建造者和商人生产加速
 
 注意，我们多了一个新参数叫做 CustomArgumentValue，因为可能会存在一个同名的 ArgumentName 有多种用途，比如单元格生产力？城市生产力？总不能拿同一个YILED_PRODUCTION 去对应多个吧，所以只能多加个 CustomArgumentValue 和 YieldType 区别开了：
 
@@ -623,7 +623,7 @@ INSERT INTO Ruivo_Yield_IconString (YieldType, Name, IconString, TextColor, AddP
 
 ![1775901497767](image/tutorial_images/1775901497767.png)
 
-#### 数据表:  Ruivo_New_Adjacency_ProvideType
+#### 3.3.4.1. 数据表:  Ruivo_New_Adjacency_ProvideType
 
 自定义一种新的提供类型，并且附带其所能产生的modifier的效果。
 
@@ -636,13 +636,13 @@ INSERT INTO Ruivo_New_Adjacency_ProvideType (ProvideType, ModifierType, Argument
 * ModifierType：修改器效果，注意，因为是挂载在区域上的，区域具有“单元格”“所属城市”“所属玩家”的属性，你的 COLLECTION 作用范围也应当有这些属性的基础
 * ArgumentName：用于在需要向 ModifierArguments 表里加特别字段时使用，正常情况下基本都是填的 amount，所以完全不需要管这个参数，填写字段时自动把 CustomArgumentValue 参数填进去的，所以你只需要明确这里是个什么 ArgumentName 即可，虽然目前我只支持一个，但是应该也够了
 
-#### 参数：CustomArgumentValue 自定义ModifierType的值
+#### 3.3.4.2. 参数：CustomArgumentValue 自定义ModifierType的值
 
 实际上这个是我的屎山代码的产物，为了和UI显示做到兼容，只能出此下策了，也就是说在设计非预设产出的情况下，非property体系的情况下， modifierType 有除了数量 amount 以外的参数的情况下，你需要额外再把真正的目标写到这，区别于 YieldType。
 
 我举个例子，我们可以在 Ruivo_Yield_IconString表中定义出建造者加速 UNIT_BUILDER_ACCELERATION 这个新的产出，但是我们在填主表 Ruivo_New_Adjacency 的时候还是得要再写一次 UNIT_BUILDER，比较 UNIT_BUILDER_ACCELERATION 并不是一种 UnitType 单位类型。
 
-### 示例-自由组装模式-港口提供捕捞范围
+### 3.3.5. 示例-自由组装模式-港口提供捕捞范围
 
 比较复杂的自由组装模式的示例：
 
@@ -782,7 +782,7 @@ INSERT INTO Ruivo_New_Adjacency_ProvideType (ProvideType, ModifierType, Argument
 </GameData>
 ```
 
-#### 参数：FreeCompose 自由组装模式
+#### 3.3.5.1. 参数：FreeCompose 自由组装模式
 
 启用**自由组装模式**，是高级用法，用于实现非标准的特殊加成效果，启用时，仅会保留 lua 端在区域所处单元格的统计数据的一系列 property 及其单元格的requirement。布尔值，仅支持 0 或 1：
 
@@ -791,7 +791,7 @@ INSERT INTO Ruivo_New_Adjacency_ProvideType (ProvideType, ModifierType, Argument
 
 这个参数原本是为了有新加入的 Modifier 需求所准备的，但是现在看来，因为已经可以通过 Ruivo_New_Adjacency_ProvideType 表和 CustomArgumentValue 参数实现新加入 ModifierType ，而且也有了provide property 和 from property 两种可以自成体系的方法，这个参数现在只能用在10进制或者什么别的场景了。
 
-#### 注意点：关于区域所在单元格留下的lua端统计数据property
+#### 3.3.5.2. 注意点：关于区域所在单元格留下的lua端统计数据property
 
 如果你想在 sql 端或者 lua 端使用区域在单元格留下的统计数据，可以通过property获取：
 
@@ -808,7 +808,7 @@ local current = pPlot:GetProperty(TotalKey) or 0
 
 其对应的key名称是你这一条相邻加成的ID加上后缀，_TOTAL 是相邻数量，_ACTUAL_AMOUNT 是乘以你的加成量的结果，比如你的商业中心相邻3段河流，相邻每段+2金币，那么前者就是3，后者就是6。
 
-### 示例-自由组装模式-宇航中心根据维度获得宇航项目加速
+### 3.3.6. 示例-自由组装模式-宇航中心根据维度获得宇航项目加速
 
 其实这个是我老早写的，现在已经能够通过自定义ProvideType实现了：
 
@@ -862,7 +862,7 @@ local current = pPlot:GetProperty(TotalKey) or 0
 --============================================================================================================================
 ```
 
-### 示例-Property作为相邻来源-圣地获得传递相邻加成
+### 3.3.7. 示例-Property作为相邻来源-圣地获得传递相邻加成
 
 要注意的是，FROM PROPERTY系列是不自带Tooltip翻译的，需要自行去替换：
 
@@ -902,7 +902,7 @@ VALUES
 
 ![1775909832249](image/tutorial_images/1775909832249.png)
 
-### 示例-提供Property作为加成-[天童凯伊](https://steamcommunity.com/sharedfiles/filedetails/?id=3671918017)的千年校区
+### 3.3.8. 示例-提供Property作为加成-[天童凯伊](https://steamcommunity.com/sharedfiles/filedetails/?id=3671918017)的千年校区
 
 将就看吧：
 
@@ -965,7 +965,7 @@ VALUES
 
 ![1775910132109](image/tutorial_images/1775910132109.png)
 
-# 结语
+# 4. 结语
 
 嗯，教程大概就是这样，下课！
 
