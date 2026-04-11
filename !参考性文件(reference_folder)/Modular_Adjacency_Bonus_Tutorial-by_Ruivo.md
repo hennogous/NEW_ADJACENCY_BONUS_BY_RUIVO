@@ -60,11 +60,11 @@ INSERT INTO Ruivo_New_Adjacency
 
 After adding this, it works! Now the Commercial Hub receives a bonus from every adjacent river segment. This bonus can go up to +5 since a plot can have up to 5 river edges! Unique districts also benefit!
 
-![1775652413743](image/模块化相邻加成教程-by_Ruivo/1775652413743.png)
+![1775652413743](image/tutorial_images/1775652413743.png)
 
-![1775652453359](image/模块化相邻加成教程-by_Ruivo/1775652453359.png)
+![1775652453359](image/tutorial_images/1775652453359.png)
 
-![1775654973095](image/模块化相邻加成教程-by_Ruivo/1775654973095.png)
+![1775654973095](image/tutorial_images/1775654973095.png)
 
 Now let's analyze the parameters. Unless customizing, all operations revolve around the **Ruivo_New_Adjacency** table.
 
@@ -145,7 +145,7 @@ INSERT INTO Ruivo_New_Adjacency
  'DISTRICT_THEATER', 'YIELD_CULTURE',   1,           'FROM_CITY_SURPLUS_AMENITIES',  1,                       1, 'OnlyHuman');
 ```
 
-![1775655597748](image/模块化相邻加成教程-by_Ruivo/1775655597748.png)
+![1775655597748](image/tutorial_images/1775655597748.png)
 
 #### Parameter: Only (Human/AI Target)
 
@@ -171,7 +171,7 @@ INSERT INTO Ruivo_New_Adjacency
  'DISTRICT_CAMPUS',  'YIELD_SCIENCE',   1,           'FROM_UNCONDITIONAL_BONUS',     1,                       1,  1);
 ```
 
-![1775656025569](image/模块化相邻加成教程-by_Ruivo/1775656025569.png)
+![1775656025569](image/tutorial_images/1775656025569.png)
 
 #### Parameter: NewMethod
 
@@ -201,7 +201,7 @@ INSERT INTO Ruivo_New_Adjacency
  'DISTRICT_ENTERTAINMENT_COMPLEX',  'SelfAmenity',  'YIELD_AMENITY',    0.5,            'FROM_ADJACENT_DISTRICT',           1,                      1);
 ```
 
-![1775656754251](image/模块化相邻加成教程-by_Ruivo/1775656754251.png)
+![1775656754251](image/tutorial_images/1775656754251.png)
 
 #### Parameter: ProvideType
 
@@ -225,7 +225,7 @@ FROM Ruivo_ProvideType_YieldType;
 
 Includes: Air Slots, City Growth Speed, District Slots, Trade Capacity, Housing, Amenities, Loyalty, Influence, Diplomatic Favor, Tourism, Power, the 6 standard yields, Eurekas/Inspirations, Great Person Points, City Plot Appeal, and Strategic Resources.
 
-![1775658689448](image/模块化相邻加成教程-by_Ruivo/1775658689448.png)
+![1775658689448](image/tutorial_images/1775658689448.png)
 
 Additionally, this mod supports the **Property** system. Providing properties and using them as sources gives this mod incredible flexibility!
 
@@ -242,7 +242,7 @@ INSERT INTO Ruivo_New_Adjacency
  'DISTRICT_INDUSTRIAL_ZONE',  'GreatPersonPoints',  'GREAT_PERSON_CLASS_ENGINEER',    1,    'FROM_CITY_CAO_YIELD', 'YIELD_PRODUCTION',                   1,                      1);
 ```
 
-![1775874976118](image/模块化相邻加成教程-by_Ruivo/1775874976118.png)
+![1775874976118](image/tutorial_images/1775874976118.png)
 
 #### Parameter: CustomAdjacentObject
 
@@ -276,7 +276,7 @@ INSERT INTO Ruivo_New_Adjacency
  'DISTRICT_PRESERVE',   'SelfHousing', 'YIELD_HOUSING', 1,             'FROM_RINGS_NATIONALPARK',       2,                  1,                       1);
 ```
 
-![1775878237062](image/模块化相邻加成教程-by_Ruivo/1775878237062.png)
+![1775878237062](image/tutorial_images/1775878237062.png)
 
 #### Parameter: Rings (Multi-ring Adjacency)
 
@@ -299,7 +299,7 @@ INSERT INTO Ruivo_New_Adjacency
  'DISTRICT_HARBOR',    'SelfBonus',   'YIELD_GOLD',     1,             'FROM_RINGS_TYPETAG_RESOURCE',     'CLASS_GOLD',  3,                      1,                       1);
 ```
 
-![1775879514177](image/模块化相邻加成教程-by_Ruivo/1775879514177.png)
+![1775879514177](image/tutorial_images/1775879514177.png)
 
 ### Example: Theater gets Gold from Luxury Resources within 2 rings (Magnificence Catherine)
 
@@ -314,7 +314,7 @@ INSERT INTO Ruivo_New_Adjacency
  'DISTRICT_THEATER',   'SelfBonus',   'YIELD_GOLD',     1,             'FROM_RINGS_CAO_RESOURCE_CLASS', 'RESOURCECLASS_LUXURY',     2,                  0,                       1, 'TRAIT_LEADER_MAGNIFICENCES');
 ```
 
-![1775880864130](image/模块化相邻加成教程-by_Ruivo/1775880864130.png)
+![1775880864130](image/tutorial_images/1775880864130.png)
 
 #### Parameter: TraitType
 
@@ -337,7 +337,7 @@ INSERT INTO Ruivo_New_Adjacency
  'DISTRICT_THEATER',   'SelfBonus',   'YIELD_GOLD',     1,             'FROM_RINGS_CAO_RESOURCE_CLASS', 'RESOURCECLASS_LUXURY',     2,                  0,                       1, 'TraitModifiers', 'TRAIT_LEADER_MAGNIFICENCES', 'COLLECTION_PLAYER_DISTRICTS');
 ```
 
-![1775881303326](image/模块化相邻加成教程-by_Ruivo/1775881303326.png)
+![1775881303326](image/tutorial_images/1775881303326.png)
 
 #### Parameter: ModifierOwner
 
@@ -407,7 +407,7 @@ Then provide the localization:
 </GameData>
 ```
 
-![1775898293503](image/模块化相邻加成教程-by_Ruivo/1775898293503.png)
+![1775898293503](image/tutorial_images/1775898293503.png)
 
 #### Table: Ruivo_New_Adjacency_Text
 
@@ -470,7 +470,7 @@ Localization:
 </GameData>
 ```
 
-![1775899577629](image/模块化相邻加成教程-by_Ruivo/1775899577629.png)
+![1775899577629](image/tutorial_images/1775899577629.png)
 
 #### Table: Ruivo_CAO (Custom Adjacent Object Text Table)
 
@@ -555,7 +555,7 @@ Localization:
 </GameData>
 ```
 
-![1775900810512](image/模块化相邻加成教程-by_Ruivo/1775900810512.png)
+![1775900810512](image/tutorial_images/1775900810512.png)
 
 #### Table: Ruivo_Yield_IconString (Custom Yield Display Table)
 
@@ -611,7 +611,7 @@ Localization:
 </GameData>
 ```
 
-![1775901497767](image/模块化相邻加成教程-by_Ruivo/1775901497767.png)
+![1775901497767](image/tutorial_images/1775901497767.png)
 
 #### Table: Ruivo_New_Adjacency_ProvideType
 
@@ -728,13 +728,13 @@ INSERT INTO Ruivo_New_Adjacency
  'DISTRICT_HOLY_SITE', 'SelfBonus',    'YIELD_FAITH', 1,            'FROM_RINGS_PLOT_PROPERTY',  'RUIVO_DISTRICT_HOLY_SITE_FROM_MOUNTAIN_TOTAL',  2,                      1,                       1);
 ```
 
-![1775909832249](image/模块化相邻加成教程-by_Ruivo/1775909832249.png)
+![1775909832249](image/tutorial_images/1775909832249.png)
 
 ### Example: Providing Property as Bonus - [Millennium Campus](https://steamcommunity.com/sharedfiles/filedetails/?id=3671918017)
 
 [Refer to Chinese tutorial for full SQL implementation]
 
-![1775910132109](image/模块化相邻加成教程-by_Ruivo/1775910132109.png)
+![1775910132109](image/tutorial_images/1775910132109.png)
 
 # Conclusion
 
