@@ -40,7 +40,7 @@ include("RUIVO_STAT_MODULE_GP.lua");
                             local CanDisplay = CanDisplayModule(row, CivilizationType, LeaderType, playerID, pCity)
                             --开始统计
                             if CanDisplay then
-                                local iBonus = StatsModule_For_UI(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.Rings)
+                                local iBonus = StatsModule_For_UI(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.Rings, row.MustOwn)
                                 if iBonus >= 0 then
                                     local kPara = {}
                                     kPara.iX = iX
@@ -86,7 +86,7 @@ include("RUIVO_STAT_MODULE_GP.lua");
                 for _, row in ipairs(cachedEntries) do
                     local CanDisplay = CanDisplayModule(row, CivilizationType, LeaderType, playerID, pCity)
                     if CanDisplay then
-                        local iBonus = StatsModule_For_UI(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.Rings)
+                        local iBonus = StatsModule_For_UI(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.Rings, row.MustOwn)
                         if iBonus >= 0 then
                             local kPara = {
                                 iX = iX,
@@ -149,7 +149,7 @@ include("RUIVO_STAT_MODULE_GP.lua");
                             local CanDisplay = CanDisplayModule(row, CivilizationType, LeaderType, playerID, pCity)
                             --开始统计
                             if CanDisplay then
-                                local iBonus = StatsModule_For_UI(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.Rings)
+                                local iBonus = StatsModule_For_UI(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.Rings, row.MustOwn)
                                 if iBonus >= 0 then
                                     local kPara = {}
                                     kPara.iX = iX
@@ -221,7 +221,7 @@ include("RUIVO_STAT_MODULE_GP.lua");
                                     for _, row in ipairs(cachedEntries) do
                                         local CanDisplay = CanDisplayModule(row, CivilizationType, LeaderType, playerID, pCity)
                                         if CanDisplay then
-                                            local iBonus = StatsModule_For_UI(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.Rings)
+                                            local iBonus = StatsModule_For_UI(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.Rings, row.MustOwn)
                                             if iBonus >= 0 then
                                                 local kPara = {
                                                     iX = iX,
