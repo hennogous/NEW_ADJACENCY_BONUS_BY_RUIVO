@@ -28,6 +28,8 @@
         CustomAdjacentObject TEXT NOT NULL DEFAULT 'NONE',
         --环数
         Rings INTEGER NOT NULL DEFAULT 1,
+        --仅计入城市拥有者的格子；适用于所有 FROM_RINGS_* 类型，默认0（兼容现有行为）
+        MustOwn INTEGER NOT NULL DEFAULT 0,
 
 
         --是否要把加成绑在DistrictModifiers上？与TraitType互斥，在lua中进行检测和排除，增强健壮性

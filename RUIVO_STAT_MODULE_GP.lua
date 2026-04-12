@@ -723,7 +723,7 @@ RuivoAdjacencyInfo = {}
 -- 函数映射表--注册函数--在初始化 STAT_Initialize 那边进行初始化注册
 RuivoAdjacencyDispatch = {}
 -- 通用调用核心--可能要套一层pcall来捕获异常
-    function CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings)
+    function CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings, MustOwn)
         -- 1. 获取函数
         local func = RuivoAdjacencyDispatch[AdjacencyType]
 
@@ -743,23 +743,23 @@ RuivoAdjacencyDispatch = {}
         --全局游戏层级
         if attr == 'Game' then
             return func(CustomAdjacentObject) -- 部分函数可能不需要参数，Lua会自动忽略多余参数
-        
+
         --单元格层级
         elseif attr == 'Plot' then
-            return func(iX, iY, Rings, CustomAdjacentObject)
+            return func(iX, iY, Rings, CustomAdjacentObject, City, MustOwn)
 
         --区域层级
         elseif attr == 'District' then
-            return func(iX, iY, Rings, CustomAdjacentObject)
+            return func(iX, iY, Rings, CustomAdjacentObject, City, MustOwn)
 
         --城市层级
         elseif attr == 'City' then
             return func(City, CustomAdjacentObject)
-        
+
         --玩家层级
         elseif attr == 'Player' then
             return func(playerID, CustomAdjacentObject)
-        
+
         --宗教层级
         elseif attr == 'Religion' then
             --可能的特殊处理
@@ -776,34 +776,34 @@ RuivoAdjacencyDispatch = {}
     end
 --==============================================
 --统计整合模块->GP 环境
-    function StatsModule_For_GP(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings)
+    function StatsModule_For_GP(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings, MustOwn)
         local info = RuivoAdjacencyInfo[AdjacencyType]
         -- 只有配置了 Environment="GamePlay" 才执行
         if info and info.Environment == 'GamePlay' then
-            --print("GP开始了",CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings))
-            return CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings)
+            --print("GP开始了",CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings, MustOwn))
+            return CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings, MustOwn)
         end
         return -1
     end
 --==============================================
 --统计整合模块->UI 环境
-    function StatsModule_For_UI(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings)
+    function StatsModule_For_UI(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings, MustOwn)
         local info = RuivoAdjacencyInfo[AdjacencyType]
         -- 只有配置了 Environment="UserInterface" 才执行
         if info and info.Environment == 'UserInterface' then
-            --print("UI开始了",CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings))
-            return CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings)
+            --print("UI开始了",CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings, MustOwn))
+            return CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings, MustOwn)
         end
         return -1
     end
 --==============================================
 --统计整合模块->显示用 (UI和GP都可能显示)
-    function StatsModule_For_Display(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings)
+    function StatsModule_For_Display(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings, MustOwn)
         local info = RuivoAdjacencyInfo[AdjacencyType]
         -- 只有配置了 CanDisplay=1 才执行
         if info and info.CanDisplay then
-            --print("显示开始了",CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings))
-            return CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings)
+            --print("显示开始了",CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings, MustOwn))
+            return CallAdjacencyFunction(AdjacencyType, CustomAdjacentObject, iX, iY, playerID, City, Rings, MustOwn)
         end
         return -1
     end
@@ -830,9 +830,10 @@ RuivoAdjacencyDispatch = {}
         return Count
     end
 --统计模块-> 环数内的单元格Property
-    function FROM_RINGS_PLOT_PROPERTY(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_PLOT_PROPERTY(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -841,16 +842,16 @@ RuivoAdjacencyDispatch = {}
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
 
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local pX, pY = pPlot:GetX(), pPlot:GetY()
                     Count = Count + (FROM_PLOT_PROPERTY(pX, pY, 0, CustomAdjacentObject) or 0)
                 end
 
             end
-        
+
         -- 计算0环（本格）
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + (FROM_PLOT_PROPERTY(iX, iY, 0, CustomAdjacentObject) or 0)
             end
         end
@@ -858,9 +859,10 @@ RuivoAdjacencyDispatch = {}
         return Count
     end
 --统计模块-> 环数内的单元格Property（哈希化）
-    function FROM_RINGS_PLOT_PROPERTY_HASHED(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_PLOT_PROPERTY_HASHED(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -869,16 +871,16 @@ RuivoAdjacencyDispatch = {}
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
 
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local pX, pY = pPlot:GetX(), pPlot:GetY()
                     Count = Count + (FROM_PLOT_PROPERTY_HASHED(pX, pY, 0, CustomAdjacentObject) or 0)
                 end
 
             end
-        
+
         -- 计算0环（本格）
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + (FROM_PLOT_PROPERTY_HASHED(iX, iY, 0, CustomAdjacentObject) or 0)
             end
         end
@@ -1365,9 +1367,10 @@ local m_ResourceVisibility = {}
     end
 ---------------------GP环境--允许多环
 --统计模块-> 环数内的道路等级总和
-    function FROM_RINGS_ROUTE(iX, iY, Rings)
+    function FROM_RINGS_ROUTE(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -1375,13 +1378,13 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local pX, pY = pPlot:GetX(), pPlot:GetY()
                     Count = Count + FROM_SELF_ROUTE(pX, pY)
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + FROM_SELF_ROUTE(iX, iY)
             end
         end
@@ -1389,9 +1392,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内的在岗公民总和
-    function FROM_RINGS_WORKER(iX, iY, Rings)
+    function FROM_RINGS_WORKER(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -1399,13 +1403,13 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local pX, pY = pPlot:GetX(), pPlot:GetY()
                     Count = Count + FROM_SELF_WORKER(pX, pY)
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + FROM_SELF_WORKER(iX, iY)
             end
         end
@@ -1413,9 +1417,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内的单位数量
-    function FROM_RINGS_UNIT(iX, iY, Rings)
+    function FROM_RINGS_UNIT(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -1423,12 +1428,12 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     Count = Count + pPlot:GetUnitCount()
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + pCenterPlot:GetUnitCount()
             end
         end
@@ -1436,9 +1441,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内的区域和奇观数量
-    function FROM_RINGS_DISTRICT_AND_WONDER(iX, iY, Rings)
+    function FROM_RINGS_DISTRICT_AND_WONDER(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -1446,12 +1452,12 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot and pPlot:GetDistrictType() ~= -1 then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) and pPlot:GetDistrictType() ~= -1 then
                     Count = Count + 1
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:GetDistrictType() ~= -1 then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:GetDistrictType() ~= -1 then
                 Count = Count + 1
             end
         end
@@ -1459,9 +1465,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内的区域数量（不含奇观）
-    function FROM_RINGS_DISTRICT(iX, iY, Rings)
+    function FROM_RINGS_DISTRICT(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -1469,7 +1476,7 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot and pPlot:GetDistrictType() ~= -1 then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) and pPlot:GetDistrictType() ~= -1 then
                     local DistrictType = GameInfo.Districts[pPlot:GetDistrictType()].DistrictType
                     if DistrictType ~= 'DISTRICT_WONDER' then
                         Count = Count + 1
@@ -1477,7 +1484,7 @@ local m_ResourceVisibility = {}
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:GetDistrictType() ~= -1 then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:GetDistrictType() ~= -1 then
                 local DistrictType = GameInfo.Districts[pCenterPlot:GetDistrictType()].DistrictType
                 if DistrictType ~= 'DISTRICT_WONDER' then
                     Count = Count + 1
@@ -1488,9 +1495,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内的淡水湖数量
-    function FROM_RINGS_LAKE(iX, iY, Rings)
+    function FROM_RINGS_LAKE(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -1498,12 +1506,12 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot and pPlot:IsLake() then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) and pPlot:IsLake() then
                     Count = Count + 1
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:IsLake() then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:IsLake() then
                 Count = Count + 1
             end
         end
@@ -1511,9 +1519,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内的淡水等级总和（无水0，咸水1，淡水3）
-    function FROM_RINGS_WATER_LEVEL(iX, iY, Rings)
+    function FROM_RINGS_WATER_LEVEL(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -1521,7 +1530,7 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local NumToAdd = 0
                     if pPlot:IsCoastalLand() then NumToAdd = 1 end
                     if pPlot:IsFreshWater()  then NumToAdd = 3 end
@@ -1529,7 +1538,7 @@ local m_ResourceVisibility = {}
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 local NumToAdd = 0
                 if pCenterPlot:IsCoastalLand() then NumToAdd = 1 end
                 if pCenterPlot:IsFreshWater()  then NumToAdd = 3 end
@@ -1540,10 +1549,11 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内的资源数量
-    function FROM_RINGS_RESOURCE(iX, iY, Rings)
+    function FROM_RINGS_RESOURCE(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
         local playerID = GetPlayerIDFromPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or playerID) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -1551,7 +1561,7 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot and pPlot:GetResourceType() > -1 then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) and pPlot:GetResourceType() > -1 then
                     local resourceType = GameInfo.Resources[pPlot:GetResourceType()].ResourceType
                     if IsPlayerCanSeeResource(playerID, resourceType) then
                         Count = Count + 1
@@ -1559,7 +1569,7 @@ local m_ResourceVisibility = {}
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:GetResourceType() > -1 then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:GetResourceType() > -1 then
                 local resourceType = GameInfo.Resources[pCenterPlot:GetResourceType()].ResourceType
                 if IsPlayerCanSeeResource(playerID, resourceType) then
                     Count = Count + 1
@@ -1570,9 +1580,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内的奇观数量（已建成）
-    function FROM_RINGS_WONDERS(iX, iY, Rings)
+    function FROM_RINGS_WONDERS(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -1580,14 +1591,14 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot and pPlot:GetWonderType() > -1 then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) and pPlot:GetWonderType() > -1 then
                     if pPlot:IsWonderComplete() then
                         Count = Count + 1
                     end
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:GetWonderType() > -1 then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:GetWonderType() > -1 then
                 if pCenterPlot:IsWonderComplete() then
                     Count = Count + 1
                 end
@@ -1597,39 +1608,41 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内的国家公园
-    function FROM_RINGS_NATIONALPARK(iX, iY, Rings)
+    function FROM_RINGS_NATIONALPARK(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
-        -- 0 环视为自身，不搜索周围格子
+        -- 0 環視為自身，不搜索周围格子
         if Rings > 0 then
             -- 开始遍历
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot and pPlot:IsNationalPark() then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) and pPlot:IsNationalPark() then
                     Count = Count + 1
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:IsNationalPark() then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:IsNationalPark() then
                 Count = Count + 1
             end
         end
 
         return Count
-    end 
+    end
 ---------------------GP环境--允许多环--有自定义相邻对象
 --统计模块-> 指定环数内指定单位
-    function FROM_RINGS_CAO_UNIT(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_CAO_UNIT(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
-        
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
+
         if Rings > 0 then
             local resultPlotIndex = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, PlotIndex in ipairs(resultPlotIndex) do
                 local plot = Map.GetPlotByIndex(PlotIndex)
-                if plot then
+                if plot and (not iOwnerFilter or plot:GetOwner() == iOwnerFilter) then
                     local units = Units.GetUnitsInPlot(plot)
                     for _, unit in ipairs(units) do
                         if unit then
@@ -1642,7 +1655,7 @@ local m_ResourceVisibility = {}
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 local units = Units.GetUnitsInPlot(pCenterPlot)
                 for _, unit in ipairs(units) do
                     if unit then
@@ -1658,15 +1671,16 @@ local m_ResourceVisibility = {}
     end
 
 --统计模块-> 指定环数内指定道路类型
-    function FROM_RINGS_CAO_ROUTE(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_CAO_ROUTE(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
-        
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
+
         if Rings > 0 then
             local resultPlotIndex = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, PlotIndex in ipairs(resultPlotIndex) do
                 local plot = Map.GetPlotByIndex(PlotIndex)
-                if plot and plot:GetRouteType() ~= -1 then
+                if plot and (not iOwnerFilter or plot:GetOwner() == iOwnerFilter) and plot:GetRouteType() ~= -1 then
                     local RouteType = GameInfo.Routes[plot:GetRouteType()].RouteType
                     if RouteType == CustomAdjacentObject then
                         Count = Count + 1
@@ -1674,7 +1688,7 @@ local m_ResourceVisibility = {}
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:GetRouteType() ~= -1 then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:GetRouteType() ~= -1 then
                 local RouteType = GameInfo.Routes[pCenterPlot:GetRouteType()].RouteType
                 if RouteType == CustomAdjacentObject then
                     Count = Count + 1
@@ -1685,7 +1699,7 @@ local m_ResourceVisibility = {}
     end
 
 --统计模块-> 指定环数内属于某类别资源数量（类别通常是加成、奢侈、战略、文物四种）
-    function FROM_RINGS_CAO_RESOURCE_CLASS(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_CAO_RESOURCE_CLASS(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         --RESOURCECLASS_BONUS
         --RESOURCECLASS_LUXURY
         --RESOURCECLASS_STRATEGIC
@@ -1694,6 +1708,7 @@ local m_ResourceVisibility = {}
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
         local playerID = GetPlayerIDFromPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or playerID) or nil
 
         -- 0环视为自身，不搜索周围格子
         if Rings > 0 then
@@ -1701,9 +1716,9 @@ local m_ResourceVisibility = {}
             local resultPlotIndex = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, PlotIndex in ipairs(resultPlotIndex) do
                 local plot = Map.GetPlotByIndex(PlotIndex)
-                if plot and plot:GetResourceType() ~= -1 then  -- -1 表示没有资源
+                if plot and (not iOwnerFilter or plot:GetOwner() == iOwnerFilter) and plot:GetResourceType() ~= -1 then  -- -1 表示没有资源
                     local ResourceType = ResourceTypeMap[plot:GetResourceType()]
-                    
+
                     if IsPlayerCanSeeResource(playerID, ResourceType) then
                         local ResourceClassType = GameInfo.Resources[ResourceType].ResourceClassType
                         if ResourceClassType == CustomAdjacentObject then
@@ -1713,9 +1728,9 @@ local m_ResourceVisibility = {}
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:GetResourceType() ~= -1 then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:GetResourceType() ~= -1 then
                 local ResourceType = ResourceTypeMap[pCenterPlot:GetResourceType()]
-                
+
                 if IsPlayerCanSeeResource(playerID, ResourceType) then
                     local ResourceClassType = GameInfo.Resources[ResourceType].ResourceClassType
                     if ResourceClassType == CustomAdjacentObject then
@@ -1728,11 +1743,12 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 指定环数内属于某tag的资源数量
-    function FROM_RINGS_TYPETAG_RESOURCE(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_TYPETAG_RESOURCE(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         local count = 0
         local centerPlot = Map.GetPlot(iX, iY)
         local tag = CustomAdjacentObject
         local playerID = GetPlayerIDFromPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or playerID) or nil
 
         -- 确认 tag 合法，且是资源类
         local tagInfo = GameInfo.Tags[tag]
@@ -1747,7 +1763,7 @@ local m_ResourceVisibility = {}
                 local plot = Map.GetPlotByIndex(plotIndex)
 
                 --单元格是否有资源
-                if plot and plot:GetResourceType() ~= -1 then
+                if plot and (not iOwnerFilter or plot:GetOwner() == iOwnerFilter) and plot:GetResourceType() ~= -1 then
                     local resourceType = ResourceTypeMap[plot:GetResourceType()]
 
                     if IsPlayerCanSeeResource(playerID, resourceType) then
@@ -1760,7 +1776,7 @@ local m_ResourceVisibility = {}
 
             end
         elseif Rings == 0 then
-            if centerPlot and centerPlot:GetResourceType() ~= -1 then
+            if centerPlot and (not iOwnerFilter or centerPlot:GetOwner() == iOwnerFilter) and centerPlot:GetResourceType() ~= -1 then
                 local resourceType = ResourceTypeMap[centerPlot:GetResourceType()]
                 if IsPlayerCanSeeResource(playerID, resourceType) then
                     if TypeTagsMap[tag] and TypeTagsMap[tag][resourceType] then
@@ -1773,10 +1789,11 @@ local m_ResourceVisibility = {}
         return count
     end
 --统计模块-> 指定环数内指定资源数量
-    function FROM_RINGS_CAO_RESOURCE(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_CAO_RESOURCE(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
         local playerID = GetPlayerIDFromPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or playerID) or nil
 
         -- 0环视为自身，不搜索周围格子
         if Rings > 0 then
@@ -1784,7 +1801,7 @@ local m_ResourceVisibility = {}
             local resultPlotIndex = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, PlotIndex in ipairs(resultPlotIndex) do
                 local plot = Map.GetPlotByIndex(PlotIndex)
-                if plot:GetResourceType() ~= -1 then  -- -1 表示没有资源
+                if (not iOwnerFilter or plot:GetOwner() == iOwnerFilter) and plot:GetResourceType() ~= -1 then  -- -1 表示没有资源
                     local ResourceType = ResourceTypeMap[plot:GetResourceType()]
                     if IsPlayerCanSeeResource(playerID, ResourceType) then
                         if ResourceType == CustomAdjacentObject then
@@ -1794,7 +1811,7 @@ local m_ResourceVisibility = {}
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:GetResourceType() ~= -1 then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:GetResourceType() ~= -1 then
                 local ResourceType = ResourceTypeMap[pCenterPlot:GetResourceType()]
                 if IsPlayerCanSeeResource(playerID, ResourceType) then
                     if ResourceType == CustomAdjacentObject then
@@ -1807,16 +1824,17 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 指定环数内指定改良数量
-    function FROM_RINGS_CAO_IMPROVEMENT(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_CAO_IMPROVEMENT(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
-        
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
+
         if Rings > 0 then
 
             local resultPlotIndex = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, PlotIndex in ipairs(resultPlotIndex) do
                 local plot = Map.GetPlotByIndex(PlotIndex)
-                if plot:GetImprovementType() ~= -1 and not plot:IsImprovementPillaged() then
+                if (not iOwnerFilter or plot:GetOwner() == iOwnerFilter) and plot:GetImprovementType() ~= -1 and not plot:IsImprovementPillaged() then
                     local ImprovementType = ImprovementTypeMap[plot:GetImprovementType()]
                     if ImprovementType == CustomAdjacentObject then
                         Count = Count + 1
@@ -1824,7 +1842,7 @@ local m_ResourceVisibility = {}
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:GetImprovementType() ~= -1 and not pCenterPlot:IsImprovementPillaged() then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:GetImprovementType() ~= -1 and not pCenterPlot:IsImprovementPillaged() then
                 local ImprovementType = ImprovementTypeMap[pCenterPlot:GetImprovementType()]
                 if ImprovementType == CustomAdjacentObject then
                     Count = Count + 1
@@ -1834,15 +1852,16 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 指定环数内指定区域数量
-    function FROM_RINGS_CAO_DISTRICT(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_CAO_DISTRICT(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
-        
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
+
         if Rings > 0 then
             local resultPlotIndex = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, PlotIndex in ipairs(resultPlotIndex) do
                 local plot = Map.GetPlotByIndex(PlotIndex)
-                if plot:GetDistrictType() ~= -1 then
+                if (not iOwnerFilter or plot:GetOwner() == iOwnerFilter) and plot:GetDistrictType() ~= -1 then
                     local DistrictType = DistrictTypeMap[plot:GetDistrictType()]
                     if DistrictType == CustomAdjacentObject then
                         Count = Count + 1
@@ -1850,7 +1869,7 @@ local m_ResourceVisibility = {}
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:GetDistrictType() ~= -1 then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:GetDistrictType() ~= -1 then
                 local DistrictType = DistrictTypeMap[pCenterPlot:GetDistrictType()]
                 if DistrictType == CustomAdjacentObject then
                     Count = Count + 1
@@ -1860,15 +1879,16 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 指定环数内指定地貌数量
-    function FROM_RINGS_CAO_FEATURE(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_CAO_FEATURE(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
-        
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
+
         if Rings > 0 then
             local resultPlotIndex = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, PlotIndex in ipairs(resultPlotIndex) do
                 local plot = Map.GetPlotByIndex(PlotIndex)
-                if plot:GetFeatureType() ~= -1 then
+                if (not iOwnerFilter or plot:GetOwner() == iOwnerFilter) and plot:GetFeatureType() ~= -1 then
                     local FeatureType = FeatureTypeMap[plot:GetFeatureType()]
                     if FeatureType == CustomAdjacentObject then
                         Count = Count + 1
@@ -1876,7 +1896,7 @@ local m_ResourceVisibility = {}
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:GetFeatureType() ~= -1 then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:GetFeatureType() ~= -1 then
                 local FeatureType = FeatureTypeMap[pCenterPlot:GetFeatureType()]
                 if FeatureType == CustomAdjacentObject then
                     Count = Count + 1
@@ -1886,9 +1906,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 指定环数内指定地形（函数格式）数量
-    function FROM_RINGS_CAO_TERRAIN_SETS(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_CAO_TERRAIN_SETS(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
         
         if Rings > 0 then
             local resultPlotIndex = RuivoGetRingPlotIndexes(iX, iY, Rings)
@@ -1932,7 +1953,7 @@ local m_ResourceVisibility = {}
 
                 end
 
-                if isRight then
+                if isRight and (not iOwnerFilter or plot:GetOwner() == iOwnerFilter) then
                     Count = Count + 1
                 end
             end
@@ -1975,23 +1996,24 @@ local m_ResourceVisibility = {}
 
                 end
             end
-            
-            if isRight then
+
+            if isRight and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + 1
             end
         end
         return Count
     end
 --统计模块-> 指定环数内指定地形（地形type格式）数量
-    function FROM_RINGS_CAO_TERRAIN(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_CAO_TERRAIN(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
-        
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
+
         if Rings > 0 then
             local resultPlotIndex = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, PlotIndex in ipairs(resultPlotIndex) do
                 local plot = Map.GetPlotByIndex(PlotIndex)
-                if plot:GetTerrainType() ~= -1 then
+                if (not iOwnerFilter or plot:GetOwner() == iOwnerFilter) and plot:GetTerrainType() ~= -1 then
                     local TerrainType = TerrainTypeMap[plot:GetTerrainType()]
                     if TerrainType == CustomAdjacentObject then
                         Count = Count + 1
@@ -1999,7 +2021,7 @@ local m_ResourceVisibility = {}
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot and pCenterPlot:GetTerrainType() ~= -1 then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:GetTerrainType() ~= -1 then
                 local TerrainType = TerrainTypeMap[pCenterPlot:GetTerrainType()]
                 if TerrainType == CustomAdjacentObject then
                     Count = Count + 1
@@ -2590,9 +2612,10 @@ local m_ResourceVisibility = {}
     end
 ---------------------GP环境--允许多环
 --统计模块-> 环数内区域血量上限
-    function FROM_RINGS_DISTRICT_MAX_HP(iX, iY, Rings)
+    function FROM_RINGS_DISTRICT_MAX_HP(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -2600,13 +2623,13 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local pX, pY = pPlot:GetX(), pPlot:GetY()
                     Count = Count + FROM_SELF_DISTRICT_MAX_HP(pX, pY)
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + FROM_SELF_DISTRICT_MAX_HP(iX, iY)
             end
         end
@@ -2614,9 +2637,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内区域受到的伤害
-    function FROM_RINGS_DISTRICT_DAMAGE(iX, iY, Rings)
+    function FROM_RINGS_DISTRICT_DAMAGE(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -2624,13 +2648,13 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local pX, pY = pPlot:GetX(), pPlot:GetY()
                     Count = Count + FROM_SELF_DISTRICT_DAMAGE(pX, pY)
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + FROM_SELF_DISTRICT_DAMAGE(iX, iY)
             end
         end
@@ -2638,9 +2662,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内区域剩余血量
-    function FROM_RINGS_DISTRICT_REMAIN_HP(iX, iY, Rings)
+    function FROM_RINGS_DISTRICT_REMAIN_HP(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -2648,13 +2673,13 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local pX, pY = pPlot:GetX(), pPlot:GetY()
                     Count = Count + FROM_SELF_DISTRICT_REMAIN_HP(pX, pY)
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + FROM_SELF_DISTRICT_REMAIN_HP(iX, iY)
             end
         end
@@ -2662,9 +2687,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内区域城墙血量上限
-    function FROM_RINGS_WALL_MAX_HP(iX, iY, Rings)
+    function FROM_RINGS_WALL_MAX_HP(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -2672,13 +2698,13 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local pX, pY = pPlot:GetX(), pPlot:GetY()
                     Count = Count + FROM_SELF_WALL_MAX_HP(pX, pY)
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + FROM_SELF_WALL_MAX_HP(iX, iY)
             end
         end
@@ -2686,9 +2712,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内区域城墙受到的伤害
-    function FROM_RINGS_WALL_DAMAGE(iX, iY, Rings)
+    function FROM_RINGS_WALL_DAMAGE(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -2696,13 +2723,13 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local pX, pY = pPlot:GetX(), pPlot:GetY()
                     Count = Count + FROM_SELF_WALL_DAMAGE(pX, pY)
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + FROM_SELF_WALL_DAMAGE(iX, iY)
             end
         end
@@ -2710,9 +2737,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内区域城墙剩余血量
-    function FROM_RINGS_WALL_REMAIN_HP(iX, iY, Rings)
+    function FROM_RINGS_WALL_REMAIN_HP(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -2720,13 +2748,13 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local pX, pY = pPlot:GetX(), pPlot:GetY()
                     Count = Count + FROM_SELF_WALL_REMAIN_HP(pX, pY)
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + FROM_SELF_WALL_REMAIN_HP(iX, iY)
             end
         end
@@ -2734,9 +2762,10 @@ local m_ResourceVisibility = {}
         return Count
     end
 --统计模块-> 环数内区域驻军防御力
-    function FROM_RINGS_DEFENSE_STRENGTH(iX, iY, Rings)
+    function FROM_RINGS_DEFENSE_STRENGTH(iX, iY, Rings, _, pCity, MustOwn)
         local Count = 0
         local pCenterPlot = Map.GetPlot(iX, iY)
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -2744,13 +2773,13 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local pX, pY = pPlot:GetX(), pPlot:GetY()
                     Count = Count + FROM_SELF_DEFENSE_STRENGTH(pX, pY)
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 Count = Count + FROM_SELF_DEFENSE_STRENGTH(iX, iY)
             end
         end
@@ -2759,7 +2788,7 @@ local m_ResourceVisibility = {}
     end
 ---------------------GP环境--允许多环--有自定义相邻对象
 --统计模块-> 环数内区域的指定相邻加成（6种）
-    function FROM_RINGS_DISTRICTS_CAO_YIELD(iX, iY, Rings, CustomAdjacentObject)
+    function FROM_RINGS_DISTRICTS_CAO_YIELD(iX, iY, Rings, CustomAdjacentObject, pCity, MustOwn)
         --YIELD_FOOD
         --YIELD_PRODUCTION
         --YIELD_GOLD
@@ -2771,6 +2800,7 @@ local m_ResourceVisibility = {}
         local pCenterPlot = Map.GetPlot(iX, iY)
         local YieldType = CustomAdjacentObject
         local iYield = GameInfo.Yields[YieldType].Index
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
 
         -- 搜索周围格子
         if Rings > 0 then
@@ -2778,10 +2808,10 @@ local m_ResourceVisibility = {}
             local resultPlotIndexes = RuivoGetRingPlotIndexes(iX, iY, Rings)
             for _, plotIndex in ipairs(resultPlotIndexes) do
                 local pPlot = Map.GetPlotByIndex(plotIndex)
-                if pPlot then
+                if pPlot and (not iOwnerFilter or pPlot:GetOwner() == iOwnerFilter) then
                     local districtID = pPlot:GetDistrictID()
                     local pPlayer = Players[pPlot:GetOwner()]
-                    
+
                     if pPlayer then
                         local pDistrict = pPlayer:GetDistricts():FindID(districtID)
                         if pDistrict then
@@ -2791,10 +2821,10 @@ local m_ResourceVisibility = {}
                 end
             end
         elseif Rings == 0 then
-            if pCenterPlot then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) then
                 local districtID = pCenterPlot:GetDistrictID()
                 local pPlayer = Players[pCenterPlot:GetOwner()]
-                
+
                 if pPlayer then
                     local pDistrict = pPlayer:GetDistricts():FindID(districtID)
                     if pDistrict then
@@ -3824,7 +3854,7 @@ local m_ResourceVisibility = {}
                         iX, iY = plot:GetX(), plot:GetY()
                     end
                     -- pcall 保护：plot=nil 时 Plot/District 系函数会炸，兜底返回 -1
-                    local ok, result = pcall(StatsModule_For_Display, row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pkCity, row.Rings)
+                    local ok, result = pcall(StatsModule_For_Display, row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pkCity, row.Rings, row.MustOwn)
                     local iBonus = ok and result or -1
                     local AdjacentSubjectNum = iBonus --缓存相邻对象数量
                     iBonus = math.floor(math.max(iBonus * row.YieldChange, 0)) --不能为负数
@@ -4186,6 +4216,7 @@ local m_ResourceVisibility = {}
                     AdjacencyType       = row.AdjacencyType,
                     CustomAdjacentObject= row.CustomAdjacentObject,
                     Rings               = row.Rings,
+                    MustOwn             = row.MustOwn or 0,
                     DistrictModifiers   = row.DistrictModifiers,
                     TraitType           = row.TraitType or false,
                     ModifierOwner       = row.ModifierOwner,
