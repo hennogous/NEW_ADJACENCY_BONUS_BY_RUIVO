@@ -3827,8 +3827,9 @@ local m_ResourceVisibility = {}
                     local ok, result = pcall(StatsModule_For_Display, row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pkCity, row.Rings)
                     local iBonus = ok and result or -1
                     local AdjacentSubjectNum = iBonus --缓存相邻对象数量
-                    iBonus = math.floor(math.max(iBonus * row.YieldChange, 0)) --不能为负数
-                    iBonus = math.min(iBonus, maxNum)
+                    iBonus = math.floor(iBonus * row.YieldChange)
+                    if AdjacentSubjectNum == -1 then iBonus = 0 end -- StatsModule error sentinel
+                    iBonus = math.max(math.min(iBonus, maxNum), -maxNum)
 
                     -- 分流逻辑：
                     -- plot=nil: 弹窗模式，仅非Plot/District系
