@@ -114,7 +114,7 @@
 --modifier部分--具体什么参数
     INSERT INTO ModifierArguments (ModifierId,                          Name,                   Value)
     SELECT           ListA.ID || '_' || ListB.Num,                     'YieldType',             ListA.YieldType         		FROM Ruivo_New_Adjacency ListA JOIN Ruivo_BinaryList ListB ON 1=1 WHERE ListA.FreeCompose = 0
-    UNION SELECT     ListA.ID || '_' || ListB.Num,                     'Amount',                ListB.Num                       FROM Ruivo_New_Adjacency ListA JOIN Ruivo_BinaryList ListB ON 1=1 WHERE ListA.FreeCompose = 0
+    UNION SELECT     ListA.ID || '_' || ListB.Num,                     'Amount',                CASE WHEN ListA.YieldChange < 0 THEN -ListB.Num ELSE ListB.Num END FROM Ruivo_New_Adjacency ListA JOIN Ruivo_BinaryList ListB ON 1=1 WHERE ListA.FreeCompose = 0
     UNION SELECT     ListA.ID || '_' || ListB.Num,                     'SourceType',           'FREE_POWER_SOURCE_MISC'         FROM Ruivo_New_Adjacency ListA JOIN Ruivo_BinaryList ListB ON 1=1 WHERE ListA.FreeCompose = 0 AND  ListA.ProvideType = 'SelfPower'
     UNION SELECT     ListA.ID || '_' || ListB.Num,                     'GreatPersonClassType',  ListA.YieldType                 FROM Ruivo_New_Adjacency ListA JOIN Ruivo_BinaryList ListB ON 1=1 WHERE ListA.FreeCompose = 0 AND (ListA.ProvideType = 'GreatPersonPoints' OR ListA.ProvideType = 'GreatPersonMultiplier')
     UNION SELECT     ListA.ID || '_' || ListB.Num,                     'ResourceType',          ListA.YieldType                 FROM Ruivo_New_Adjacency ListA JOIN Ruivo_BinaryList ListB ON 1=1 WHERE ListA.FreeCompose = 0 AND  ListA.ProvideType = 'SelfExtractResource'
