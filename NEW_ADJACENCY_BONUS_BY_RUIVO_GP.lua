@@ -34,7 +34,7 @@
         --print(ActualAmountKey, tostring(pPlot:GetProperty(ActualAmountKey))) -- 输出检查
 
         -- 防止超出压缩表上限
-        ActualAmount = math.min(ActualAmount, maxNum);
+        ActualAmount = math.min(math.abs(ActualAmount), maxNum);
 
         --测试信息
         --Game.AddWorldViewText(0, ID .. '对应数量：' .. iBonus .. '总量：' .. ActualAmount, iX, iY)
