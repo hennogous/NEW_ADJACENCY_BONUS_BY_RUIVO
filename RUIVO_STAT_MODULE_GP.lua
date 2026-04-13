@@ -462,7 +462,7 @@ Ruivo_BinaryList = {}
 --==============================================
 --UI环境的小工具部分
 --根据产出获得图标
-    function RUIVO_GetYieldTextIcon( yieldType:string )
+    function RUIVO_GetYieldTextIcon( yieldType:string, iValue:number )
         local  iconString:string = "";
         if		GameInfo.Ruivo_Yield_IconString[yieldType]	then iconString = GameInfo.Ruivo_Yield_IconString[yieldType].IconString
         elseif  yieldType == "YIELD_TOURISM"                then iconString = "[ICON_Tourism]"
@@ -472,7 +472,7 @@ Ruivo_BinaryList = {}
         elseif  yieldType == "YIELD_AMENITY"                then iconString = "[ICON_Amenities]"
         elseif  yieldType == "YIELD_AIR_SLOTS"              then iconString = "[ICON_MAB_AirSlots_22]"
         elseif  yieldType == "YIELD_HOUSING"                then iconString = "[ICON_Housing]"
-        elseif  yieldType == "YIELD_LOYALTY"                then iconString = "[ICON_PressureUp]"
+        elseif  yieldType == "YIELD_LOYALTY"                then iconString = (iValue and iValue < 0) and "[ICON_PressureDown]" or "[ICON_PressureUp]"
         elseif  yieldType == "YIELD_TRADE_ROUTE"            then iconString = "[ICON_TradeRoute]"
         elseif  yieldType == "YIELD_DISTRICT_SLOT"          then iconString = "[ICON_DISTRICT]"
         elseif  yieldType == "YIELD_CITY_GROWTH"            then iconString = "[Icon_Citizen]"
@@ -625,7 +625,7 @@ Ruivo_BinaryList = {}
     end
 --根据产出和数量获得完整文本
     function RUIVO_GetYieldString( yieldType:string, amount:number )
-        return RUIVO_GetYieldTextIcon(yieldType)..RUIVO_GetYieldTextColor(yieldType)..RUIVO_toPlusMinusString(amount).."[ENDCOLOR]";
+        return RUIVO_GetYieldTextIcon(yieldType, amount)..RUIVO_GetYieldTextColor(yieldType)..RUIVO_toPlusMinusString(amount).."[ENDCOLOR]";
     end
 --获取自定义对象（CustomAdjacentObject）的本地化名称，带图标（若可用）
     function RUIVO_GetCAOName(CustomAdjacentObject)
@@ -3912,7 +3912,7 @@ local m_ResourceVisibility = {}
                         --提供相邻加成已弃用，只有自己的相邻加成
                         if row.ProvideType ~= 'ProvideToADJ' then
                             local numText = (iBonus > 0 and "+" or "") .. tostring(iBonus)
-                            local yieldIcon = RUIVO_GetYieldTextIcon(yieldType)..RUIVO_GetYieldText(yieldType, ProvideType)
+                            local yieldIcon = RUIVO_GetYieldTextIcon(yieldType, iBonus)..RUIVO_GetYieldText(yieldType, ProvideType)
                             local customAdjObj = row.CustomAdjacentObject
                             local newAdjTextRow = GameInfo.Ruivo_New_Adjacency_Text[row.ID]
                             
@@ -4103,7 +4103,7 @@ local m_ResourceVisibility = {}
             if not (FreeCompose and ProvideType ~= "ShowFreeComposeYield") then
                 --获取加成值、产出图标、取代文本行
                 local numText = tostring(YieldChange)
-                local yieldIcon = RUIVO_GetYieldTextIcon(YieldType)..RUIVO_GetYieldText(YieldType, ProvideType)
+                local yieldIcon = RUIVO_GetYieldTextIcon(YieldType, YieldChange)..RUIVO_GetYieldText(YieldType, ProvideType)
                 local newAdjTextRow = GameInfo.Ruivo_New_Adjacency_Text[ID]
                 local AdjacentSubjectNum = 1 --默认是1个相邻对象
 
