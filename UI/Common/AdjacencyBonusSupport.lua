@@ -29,6 +29,21 @@ end
 -- Allows mods to show tile-edge icons for their Ruivo adjacency types by setting ArtdefOverlayEntry in SQL.
 local m_CAO_Icons :table = {};
 
+-- Default overlay icon for non-CAO adjacency types (no CustomAdjacentObject required).
+local m_AdjacencyType_DefaultIcons :table = {
+	FROM_ADJACENT_RESOURCE            = "Terrain_Generic_Resource",
+	FROM_ADJACENT_LAKE                = "Terrain_Coast",
+	FROM_ADJACENT_WONDERS             = "Generic_Wonder",
+	FROM_ADJACENT_DISTRICT            = "Districts_Generic_District",
+	FROM_ADJACENT_DISTRICT_AND_WONDER = "Districts_Generic_District",
+	FROM_RINGS_RESOURCE               = "Terrain_Generic_Resource",
+	FROM_RINGS_LAKE                   = "Terrain_Coast",
+	FROM_RINGS_WONDERS                = "Generic_Wonder",
+	FROM_RINGS_DISTRICT               = "Districts_Generic_District",
+	FROM_RINGS_DISTRICT_AND_WONDER    = "Districts_Generic_District",
+	FROM_RIVER_CROSSING               = "Terrain_River",
+};
+
 -- ===========================================================================
 --	功能：获取用于显示在地块之间的小图标 ArtDef 字符串名称
 --	参数：
@@ -61,7 +76,7 @@ function GetAdjacentIconArtdefName( targetDistrictType:string, plot:table, pkCit
 					-- Respect MustOwn: only show icon when the plot is owned by the city's player.
 					if row.MustOwn ~= 1 or plot:GetOwner() == pkCity:GetOwner() then
 						local cao = row.CustomAdjacentObject
-						local iconArtdef = cao and m_CAO_Icons[cao]
+						local iconArtdef = (cao and m_CAO_Icons[cao]) or m_AdjacencyType_DefaultIcons[row.AdjacencyType]
 						if iconArtdef and PlotMatchesRuivoCAO(plot, row.AdjacencyType, cao) then
 							return iconArtdef
 						end
@@ -500,8 +515,25 @@ function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:stri
 		elseif cao == "IsOpenGround"    then return adjacentPlot:IsOpenGround()
 		elseif cao == "IsRoughGround"   then return adjacentPlot:IsRoughGround()
 		end
+	elseif adjacencyType == "FROM_ADJACENT_RESOURCE" or adjacencyType == "FROM_RINGS_RESOURCE" then
+		return adjacentPlot:GetResourceType() >= 0
+	elseif adjacencyType == "FROM_ADJACENT_LAKE" or adjacencyType == "FROM_RINGS_LAKE" then
+		return adjacentPlot:IsLake()
+	elseif adjacencyType == "FROM_ADJACENT_WONDERS" or adjacencyType == "FROM_RINGS_WONDERS" then
+		return adjacentPlot:GetWonderType() >= 0 and adjacentPlot:IsWonderComplete()
+	elseif adjacencyType == "FROM_ADJACENT_DISTRICT" or adjacencyType == "FROM_RINGS_DISTRICT" then
+		local eDist = adjacentPlot:GetDistrictType()
+		if eDist >= 0 then
+			local distRow = GameInfo.Districts[eDist]
+			return distRow ~= nil and distRow.DistrictType ~= "DISTRICT_WONDER"
+		end
+		return false
+	elseif adjacencyType == "FROM_ADJACENT_DISTRICT_AND_WONDER" or adjacencyType == "FROM_RINGS_DISTRICT_AND_WONDER" then
+		return adjacentPlot:GetDistrictType() >= 0
+	elseif adjacencyType == "FROM_RIVER_CROSSING" then
+		return adjacentPlot:IsRiverCrossing()
 	end
-	-- All other types (property-based, game-level, wonder, etc.) do not correspond to a
+	-- All other types (property-based, game-level, etc.) do not correspond to a
 	-- single adjacent tile and will never produce an edge icon.
 	return false
 end
