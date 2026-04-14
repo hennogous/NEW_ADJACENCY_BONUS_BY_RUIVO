@@ -342,8 +342,9 @@ UPDATE Ruivo_AdjacencyType SET DoNotDisplayWhenPlacement = 1 WHERE AdjacencyType
 --============================================================================================================================
 --自定义相邻对象的文本（CustomAdjacentObject）
     CREATE TABLE Ruivo_CAO (
-        CustomAdjacentObject TEXT PRIMARY KEY NOT NULL, 
-        Name TEXT NOT NULL
+        CustomAdjacentObject TEXT PRIMARY KEY NOT NULL,
+        Name TEXT NOT NULL,
+        ArtdefOverlayEntry TEXT DEFAULT NULL  -- overlay artdef entry name for tile-edge icon during district placement
     );
 --文本表
     INSERT INTO Ruivo_CAO (CustomAdjacentObject, Name) VALUES

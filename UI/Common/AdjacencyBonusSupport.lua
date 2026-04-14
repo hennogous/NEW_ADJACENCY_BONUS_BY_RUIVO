@@ -25,6 +25,10 @@ for row in GameInfo.District_Adjacencies() do
 	end
 end
 
+-- CAO → artdef overlay entry name, populated from Ruivo_CAO.ArtdefOverlayEntry on LoadGameViewStateDone.
+-- Allows mods to show tile-edge icons for their Ruivo adjacency types by setting ArtdefOverlayEntry in SQL.
+local m_CAO_Icons :table = {};
+
 -- ===========================================================================
 --	功能：获取用于显示在地块之间的小图标 ArtDef 字符串名称
 --	参数：
@@ -45,6 +49,23 @@ function GetAdjacentIconArtdefName( targetDistrictType:string, plot:table, pkCit
 
 	-- 根据加成类型返回对应的图标资源名
 	if eType == AdjacencyBonusTypes.NO_ADJACENCY then
+		-- Check Ruivo adjacency rules that target ring 1 ONLY (MinRings == MaxRings == 1).
+		-- Broader ring ranges (e.g. 1–3) represent "nearby" bonuses rather than a single-tile
+		-- relationship, so they intentionally produce no edge icon.
+		if Ruivo_Adjacency_Cache and Ruivo_Adjacency_Cache.byDistrict then
+			local cachedEntries = Ruivo_Adjacency_Cache.byDistrict[targetDistrictType] or {}
+			for _, row in ipairs(cachedEntries) do
+				local minR = row.MinRings or 1
+				local maxR = row.MaxRings or row.Rings or 1
+				if minR == 1 and maxR == 1 then
+					local cao = row.CustomAdjacentObject
+					local iconArtdef = cao and m_CAO_Icons[cao]
+					if iconArtdef and PlotMatchesRuivoCAO(plot, row.AdjacencyType, cao) then
+						return iconArtdef
+					end
+				end
+			end
+		end
 		return "";
 	elseif eType == AdjacencyBonusTypes.ADJACENCY_DISTRICT then
 		return "Districts_Generic_District"; -- 通用区域图标
@@ -424,6 +445,58 @@ end
 --	参数：
 --		pCity: 目标城市
 --		buildingHash: 奇观（建筑）类型的 Hash 值
+-- ===========================================================================
+-- ===========================================================================
+--	功能：判断相邻地块是否匹配 Ruivo 相邻规则中的 CustomAdjacentObject
+--	说明：仅处理单地块可判断的 CAO 类型；属性类、游戏级、河流等类型不对应
+--	      单一地块，故意不处理，直接返回 false。
+-- ===========================================================================
+function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:string )
+	if adjacencyType == "FROM_RINGS_TYPETAG_RESOURCE" then
+		local eResource = adjacentPlot:GetResourceType()
+		if eResource >= 0 then
+			local resType = ResourceTypeMap[eResource]
+			-- TypeTagsMap structure: [tag][resourceType] = true
+			return TypeTagsMap[cao] ~= nil and TypeTagsMap[cao][resType] == true
+		end
+	elseif adjacencyType == "FROM_RINGS_CAO_RESOURCE" then
+		local eResource = adjacentPlot:GetResourceType()
+		return eResource >= 0 and ResourceTypeMap[eResource] == cao
+	elseif adjacencyType == "FROM_RINGS_CAO_IMPROVEMENT" then
+		local eImprv = adjacentPlot:GetImprovementType()
+		return eImprv >= 0 and ImprovementTypeMap[eImprv] == cao
+	elseif adjacencyType == "FROM_RINGS_CAO_FEATURE" then
+		local eFeat = adjacentPlot:GetFeatureType()
+		return eFeat >= 0 and FeatureTypeMap[eFeat] == cao
+	elseif adjacencyType == "FROM_RINGS_CAO_DISTRICT" then
+		local eDist = adjacentPlot:GetDistrictType()
+		return eDist >= 0 and DistrictTypeMap[eDist] == cao
+	elseif adjacencyType == "FROM_RINGS_CAO_TERRAIN" then
+		local eTerrain = adjacentPlot:GetTerrainType()
+		if eTerrain >= 0 then
+			local terrainRow = GameInfo.Terrains[eTerrain]
+			return terrainRow ~= nil and terrainRow.TerrainType == cao
+		end
+	end
+	-- All other types (property-based, game-level, river crossing, wonder, etc.) do not
+	-- correspond to a single adjacent tile and will never produce an edge icon.
+	return false
+end
+
+-- ===========================================================================
+--	功能：从 Ruivo_CAO.ArtdefOverlayEntry 建立 CAO → 图标 artdef 名称的查找表
+--	时机：在 LoadGameViewStateDone 时调用，与 STAT_Initialize 同时触发
+-- ===========================================================================
+function BuildCAOIconLookup()
+	m_CAO_Icons = {}
+	for row in GameInfo.Ruivo_CAO() do
+		if row.ArtdefOverlayEntry and row.ArtdefOverlayEntry ~= "" then
+			m_CAO_Icons[row.CustomAdjacentObject] = row.ArtdefOverlayEntry
+		end
+	end
+end
+Events.LoadGameViewStateDone.Add(BuildCAOIconLookup);
+
 -- ===========================================================================
 function GetCityRelatedPlotIndexesWondersAlternative( pCity:table, buildingHash:number )
 

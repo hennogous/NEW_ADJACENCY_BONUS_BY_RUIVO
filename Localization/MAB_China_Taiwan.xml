@@ -157,11 +157,16 @@
 		格式：{1_iBonus}是數量，{2_YieldIcon}是產出圖標，{3_AdjacentSubjectNum}是相鄰對象數量，{4_CAO}是自定義產出類型
 		中文文本里{2_YieldIcon}和{4_CAO}前後都要加空格，數字類不加-->
 	<!--多環相鄰加成的文本-->
-		<Row Tag="LOC_RUIVO_RINGS" Language="zh_Hant_HK">
-			<Text>來自{1_Rings}環內</Text>
+
+
+		<Row Tag="LOC_RUIVO_DISTANCE_LOCAL" Language="zh_Hant_HK">
+			<Text>local</Text>
 		</Row>
-		<Row Tag="LOC_RUIVO_SELF" Language="zh_Hant_HK">
-			<Text>本格</Text>
+		<Row Tag="LOC_RUIVO_DISTANCE_ADJACENT" Language="zh_Hant_HK">
+			<Text>adjacent</Text>
+		</Row>
+		<Row Tag="LOC_RUIVO_DISTANCE_NEARBY" Language="zh_Hant_HK">
+			<Text>nearby</Text>
 		</Row>
 	<!--無條件加成-->
 		<Row Tag="LOC_RUIVO_FROM_UNCONDITIONAL_BONUS" Language="zh_Hant_HK">
