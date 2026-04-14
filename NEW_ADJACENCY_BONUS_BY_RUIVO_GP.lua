@@ -100,7 +100,7 @@
                                 local CanDisplay = CanDisplayModule(row, CivilizationType, LeaderType, playerID, pCity)
                                 --开始统计
                                 if CanDisplay then
-                                    local iBonus = StatsModule_For_GP(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.Rings)
+                                    local iBonus = StatsModule_For_GP(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.MinRings, row.MaxRings, row.MustOwn)
                                     if iBonus >= 0 then
                                         Ruivo_Zip_SetProperty(row.ID, iBonus, row.YieldChange, iX, iY)
                                     end
@@ -187,7 +187,7 @@
                 for _, row in ipairs(cachedEntries) do
                     local CanDisplay = CanDisplayModule(row, CivilizationType, LeaderType, playerID, pCity)
                     if CanDisplay then
-                        local iBonus = StatsModule_For_GP(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.Rings)
+                        local iBonus = StatsModule_For_GP(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.MinRings, row.MaxRings, row.MustOwn)
                         if iBonus >= 0 then
                             Ruivo_Zip_SetProperty(row.ID, iBonus, row.YieldChange, iX, iY)
                         end
@@ -256,7 +256,7 @@
                                     for _, row in ipairs(cachedEntries) do
                                         local CanDisplay = CanDisplayModule(row, CivilizationType, LeaderType, playerID, pCity)
                                         if CanDisplay then
-                                            local iBonus = StatsModule_For_GP(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.Rings)
+                                            local iBonus = StatsModule_For_GP(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pCity, row.MinRings, row.MaxRings, row.MustOwn)
                                             if iBonus >= 0 then
                                                 Ruivo_Zip_SetProperty(row.ID, iBonus, row.YieldChange, iX, iY)
                                             end

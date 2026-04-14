@@ -250,6 +250,9 @@
     INSERT INTO ModifierArguments (ModifierId, Name, Value) SELECT
                  'ATTACH_' || ListA.ID || '_' || ListB.Num, 'ModifierId', ListA.ID || '_' || ListB.Num              FROM Ruivo_New_Adjacency ListA JOIN Ruivo_BinaryList ListB ON 1=1 WHERE ListA.FreeCompose = 0 AND ListA.ModifierOwner != 'DistrictModifiers';
 --============================================================================================================================
+-- 确保 Rings >= MinRings（防止无效环带配置）
+    UPDATE Ruivo_New_Adjacency SET Rings = MinRings WHERE MinRings > Rings;
+--============================================================================================================================
 
 
 
