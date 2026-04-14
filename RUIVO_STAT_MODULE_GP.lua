@@ -3932,7 +3932,7 @@ local m_ResourceVisibility = {}
                             local sDistance = 'LOC_RUIVO_DISTANCE_NEARBY'
                             if row.MaxRings == 1 and row.MinRings == 1 then
                                 sDistance = 'LOC_RUIVO_DISTANCE_ADJACENT'
-                            elseif row.MaxRings == 0 and row.MinRings == 0 then
+                            elseif row.MaxRings == 0 then
                                 sDistance = 'LOC_RUIVO_DISTANCE_LOCAL'
                             end
                             local caoName = (customAdjObj ~= 'NONE') and RUIVO_GetCAOName(customAdjObj) or ""
@@ -4120,7 +4120,7 @@ local m_ResourceVisibility = {}
                 local sDistance = 'LOC_RUIVO_DISTANCE_NEARBY'
                 if MaxRings == 1 and MinRings == 1 then
                     sDistance = 'LOC_RUIVO_DISTANCE_ADJACENT'
-                elseif MaxRings == 0 and MinRings == 0 then
+                elseif MaxRings == 0 then
                     sDistance = 'LOC_RUIVO_DISTANCE_LOCAL'
                 end
                 local caoName = (CustomAdjacentObject ~= 'NONE') and RUIVO_GetCAOName(CustomAdjacentObject) or ""
