@@ -181,96 +181,96 @@
 		
 	<!--CUSTOM ADJACENT OBJECT-->
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_ROUTE" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?Route; other?Routes;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?Route; other?Routes;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_UNIT" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?Unit; other?Units;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?Unit; other?Units;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_HIGHEST_HUMAN_YIELD" Language="en_US">
 			<Text>+{1_iBonus} {2_YieldIcon} from the highest {3_AdjacentSubjectNum} {4_CAO} yield among human players.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_RESOURCE_CLASS" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?resource; other?resources;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?resource; other?resources;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_TYPETAG_RESOURCE" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?resource; other?resources;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?resource; other?resources;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_RESOURCE" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?resource; other?resources;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?resource; other?resources;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_IMPROVEMENT" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?improvement; other?improvements;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?improvement; other?improvements;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_DISTRICT" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?district; other?districts;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?district; other?districts;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_FEATURE" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?feature; other?features;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?feature; other?features;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_TERRAIN_SETS" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?terrain; other?terrains;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?terrain; other?terrains;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_TERRAIN" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?terrain; other?terrains;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?terrain; other?terrains;}.</Text>
 		</Row>
 
 	<!--PLOT PROPERTIES-->
 		<Row Tag="LOC_RUIVO_FROM_RINGS_ROUTE" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {3_AdjacentSubjectNum : plural 1?Route level; other?Route levels;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {3_AdjacentSubjectNum : plural 1?Route level; other?Route levels;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_WORKER" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {3_AdjacentSubjectNum : plural 1?working Citizen; other?working Citizens;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {3_AdjacentSubjectNum : plural 1?working Citizen; other?working Citizens;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_UNIT" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {3_AdjacentSubjectNum : plural 1?Unit; other?Units;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {3_AdjacentSubjectNum : plural 1?Unit; other?Units;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_DISTRICT_AND_WONDER" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {3_AdjacentSubjectNum : plural 1?District and Wonder; other?Districts and Wonders;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {3_AdjacentSubjectNum : plural 1?District and Wonder; other?Districts and Wonders;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_DISTRICT" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {3_AdjacentSubjectNum : plural 1?District; other?Districts;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {3_AdjacentSubjectNum : plural 1?District; other?Districts;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_LAKE" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {3_AdjacentSubjectNum : plural 1?fresh water Lake; other?fresh water Lakes;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {3_AdjacentSubjectNum : plural 1?fresh water Lake; other?fresh water Lakes;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_WATER_LEVEL" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {3_AdjacentSubjectNum : plural 1?level; other?levels;} of fresh water.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {3_AdjacentSubjectNum : plural 1?level; other?levels;} of fresh water.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_RESOURCE" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {3_AdjacentSubjectNum : plural 1?Resource; other?Resources;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {3_AdjacentSubjectNum : plural 1?Resource; other?Resources;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_WONDERS" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {3_AdjacentSubjectNum : plural 1?completed man-made Wonder; other?completed man-made Wonders;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {3_AdjacentSubjectNum : plural 1?completed man-made Wonder; other?completed man-made Wonders;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_NATIONALPARK" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} {3_AdjacentSubjectNum : plural 1?National Park; other?National Parks;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {3_AdjacentSubjectNum : plural 1?National Park; other?National Parks;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_LAND_WATER_PAIR" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} adjacent {3_AdjacentSubjectNum : plural 1?Land-Water pair; other?Land-Water pairs;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} adjacent {3_AdjacentSubjectNum : plural 1?Land-Water pair; other?Land-Water pairs;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RIVER_CROSSING" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} adjacent {3_AdjacentSubjectNum : plural 1?River edge; other?River edges;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} adjacent {3_AdjacentSubjectNum : plural 1?River edge; other?River edges;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_ADJACENT_ROUTE" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} adjacent {3_AdjacentSubjectNum : plural 1?Route level; other?Route levels;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} adjacent {3_AdjacentSubjectNum : plural 1?Route level; other?Route levels;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_SELF_ROUTE" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {3_AdjacentSubjectNum : plural 1?Route level; other?Route levels;} on this tile.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {3_AdjacentSubjectNum : plural 1?Route level; other?Route levels;} on this tile.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_ADJACENT_WORKER" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} adjacent {3_AdjacentSubjectNum : plural 1?Citizen; other?Citizens;} working.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} adjacent {3_AdjacentSubjectNum : plural 1?Citizen; other?Citizens;} working.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_ADJACENT_UNIT" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} adjacent {3_AdjacentSubjectNum : plural 1?Unit; other?Units;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} adjacent {3_AdjacentSubjectNum : plural 1?Unit; other?Units;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_SELF_WORKER" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {3_AdjacentSubjectNum : plural 1?Citizen; other?Citizens;} working in this district.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {3_AdjacentSubjectNum : plural 1?Citizen; other?Citizens;} working in this district.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_ADJACENT_DISTRICT_AND_WONDER" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} adjacent {3_AdjacentSubjectNum : plural 1?District and Wonder; other?Districts and Wonders;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} adjacent {3_AdjacentSubjectNum : plural 1?District and Wonder; other?Districts and Wonders;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_ADJACENT_DISTRICT" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} adjacent {3_AdjacentSubjectNum : plural 1?District; other?Districts;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} adjacent {3_AdjacentSubjectNum : plural 1?District; other?Districts;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_CLIFF" Language="en_US">
 			<Text>+{1_iBonus} {2_YieldIcon} from adjacent Cliffs.</Text>
@@ -282,19 +282,19 @@
 			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum}% proximity to Poles.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_ADJACENT_LAKE" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} adjacent {3_AdjacentSubjectNum : plural 1?Lake; other?Lakes;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} adjacent {3_AdjacentSubjectNum : plural 1?Lake; other?Lakes;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_ADJACENT_WATER_LEVEL" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} adjacent {3_AdjacentSubjectNum : plural 1?Water level; other?Water levels;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} adjacent {3_AdjacentSubjectNum : plural 1?Water level; other?Water levels;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_SELF_WATER_LEVEL" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {3_AdjacentSubjectNum : plural 1?Water level; other?Water levels;} on this tile.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {3_AdjacentSubjectNum : plural 1?Water level; other?Water levels;} on this tile.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_ADJACENT_RESOURCE" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} adjacent {3_AdjacentSubjectNum : plural 1?Resource; other?Resources;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} adjacent {3_AdjacentSubjectNum : plural 1?Resource; other?Resources;}.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_ADJACENT_WONDERS" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} adjacent {3_AdjacentSubjectNum : plural 1?completed Wonder; other?completed Wonders;}.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} adjacent {3_AdjacentSubjectNum : plural 1?completed Wonder; other?completed Wonders;}.</Text>
 		</Row>
 
 	<!--PLOT PROPERTIES: UI-->
@@ -432,7 +432,7 @@
 			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} surplus Air Slots in this district.</Text>
 		</Row>
 		<Row Tag="LOC_RUIVO_FROM_UI_RINGS_SURPLUS_AIR_SLOTS" Language="en_US">
-			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} {5_sDistance} surplus Air Slots.</Text>
+			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} surplus Air Slots.</Text>
 		</Row>
 
 	<!--CITY PROPERTIES-->
