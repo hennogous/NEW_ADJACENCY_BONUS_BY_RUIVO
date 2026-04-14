@@ -66,7 +66,7 @@ function GetAdjacentIconArtdefName( targetDistrictType:string, plot:table, pkCit
 					if row.MustOwn ~= 1 or plot:GetOwner() == pkCity:GetOwner() then
 						local cao = row.CustomAdjacentObject
 						local iconArtdef = (cao and m_CAO_Icons[cao]) or m_AdjacencyType_Icons[row.AdjacencyType]
-						if iconArtdef and PlotMatchesRuivoCAO(plot, row.AdjacencyType, cao) then
+						if iconArtdef and PlotMatchesRuivoCAO(plot, row.AdjacencyType, cao, direction) then
 							return iconArtdef
 						end
 					end
@@ -458,7 +458,7 @@ end
 --	说明：仅处理单地块可判断的 CAO 类型；属性类、游戏级、河流等类型不对应
 --	      单一地块，故意不处理，直接返回 false。
 -- ===========================================================================
-function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:string )
+function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:string, direction:number )
 	if adjacencyType == "FROM_RINGS_TYPETAG_RESOURCE" then
 		local eResource = adjacentPlot:GetResourceType()
 		if eResource >= 0 then
@@ -520,7 +520,29 @@ function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:stri
 	elseif adjacencyType == "FROM_ADJACENT_DISTRICT_AND_WONDER" or adjacencyType == "FROM_RINGS_DISTRICT_AND_WONDER" then
 		return adjacentPlot:GetDistrictType() >= 0
 	elseif adjacencyType == "FROM_RIVER_CROSSING" then
-		return adjacentPlot:GetRiverCrossingCount() > 0
+		-- Rivers are stored directionally: W/NW/NE edges live on the lower-left plot of the edge.
+		-- For EAST/SE/SW the river flag is on the adjacent plot; for NE/W/NW it is on the centre plot.
+		if     direction == DirectionTypes.DIRECTION_EAST      then return adjacentPlot:IsWOfRiver()
+		elseif direction == DirectionTypes.DIRECTION_SOUTHEAST then return adjacentPlot:IsNWOfRiver()
+		elseif direction == DirectionTypes.DIRECTION_SOUTHWEST then return adjacentPlot:IsNEOfRiver()
+		else
+			-- NE/W/NW: river flag lives on the centre (placement) tile — derive it from adjacent + opposite dir.
+			local oppDir
+			if     direction == DirectionTypes.DIRECTION_NORTHEAST then oppDir = DirectionTypes.DIRECTION_SOUTHWEST
+			elseif direction == DirectionTypes.DIRECTION_WEST       then oppDir = DirectionTypes.DIRECTION_EAST
+			elseif direction == DirectionTypes.DIRECTION_NORTHWEST  then oppDir = DirectionTypes.DIRECTION_SOUTHEAST
+			end
+			if oppDir then
+				local centrePlot = Map.GetAdjacentPlot(adjacentPlot:GetX(), adjacentPlot:GetY(), oppDir)
+				if centrePlot then
+					if     direction == DirectionTypes.DIRECTION_NORTHEAST then return centrePlot:IsNEOfRiver()
+					elseif direction == DirectionTypes.DIRECTION_WEST       then return centrePlot:IsWOfRiver()
+					elseif direction == DirectionTypes.DIRECTION_NORTHWEST  then return centrePlot:IsNWOfRiver()
+					end
+				end
+			end
+		end
+		return false
 	end
 	-- All other types (property-based, game-level, etc.) do not correspond to a
 	-- single adjacent tile and will never produce an edge icon.
