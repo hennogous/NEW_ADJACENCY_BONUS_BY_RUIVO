@@ -346,36 +346,38 @@ UPDATE Ruivo_AdjacencyType SET DoNotDisplayWhenPlacement = 1 WHERE AdjacencyType
         Name TEXT NOT NULL,
         ArtdefOverlayEntry TEXT DEFAULT NULL  -- overlay artdef entry name for tile-edge icon during district placement
     );
---文本表
-    INSERT INTO Ruivo_CAO (CustomAdjacentObject, Name) VALUES
-        --资源class
-        ("RESOURCECLASS_BONUS",       "LOC_RUIVO_RESOURCECLASS_BONUS"),
-        ("RESOURCECLASS_LUXURY",      "LOC_RUIVO_RESOURCECLASS_LUXURY"),
-        ("RESOURCECLASS_STRATEGIC",   "LOC_RUIVO_RESOURCECLASS_STRATEGIC"),
-        ("RESOURCECLASS_ARTIFACT",    "LOC_RUIVO_RESOURCECLASS_ARTIFACT"),
+--文本表 + 默认 tile-edge 图标 (ArtdefOverlayEntry)
+--  NULL = 没有合适的基础游戏图标，或该 CAO 类型在放置时不产生边缘图标
+    INSERT INTO Ruivo_CAO (CustomAdjacentObject, Name, ArtdefOverlayEntry) VALUES
+        --资源class (FROM_RINGS_CAO_RESOURCE_CLASS)
+        ("RESOURCECLASS_BONUS",       "LOC_RUIVO_RESOURCECLASS_BONUS",       "Terrain_Generic_Resource_Class"),
+        ("RESOURCECLASS_LUXURY",      "LOC_RUIVO_RESOURCECLASS_LUXURY",      "Terrain_Generic_Resource_Class"),
+        ("RESOURCECLASS_STRATEGIC",   "LOC_RUIVO_RESOURCECLASS_STRATEGIC",   "Terrain_Generic_Resource_Class"),
+        ("RESOURCECLASS_ARTIFACT",    "LOC_RUIVO_RESOURCECLASS_ARTIFACT",    "Terrain_Generic_Resource_Class"),
 
-        --资源tag
-        ("CLASS_FOOD",                "LOC_RUIVO_CLASS_FOOD"),
-        ("CLASS_CULTURE",             "LOC_RUIVO_CLASS_CULTURE"),
-        ("CLASS_GOLD",                "LOC_RUIVO_CLASS_GOLD"),
-        ("CLASS_PRODUCTION",          "LOC_RUIVO_CLASS_PRODUCTION"),
-        ("CLASS_SCIENCE",             "LOC_RUIVO_CLASS_SCIENCE"),
-        ("CLASS_ORAL_TRADITION",      "LOC_RUIVO_CLASS_ORAL_TRADITION"),
-        ("CLASS_GODDESS_OF_FESTIVALS","LOC_RUIVO_CLASS_GODDESS_OF_FESTIVALS"),
-        ("CLASS_SEA",                 "LOC_RUIVO_CLASS_SEA"),
+        --资源tag (FROM_RINGS_TYPETAG_RESOURCE)
+        ("CLASS_FOOD",                "LOC_RUIVO_CLASS_FOOD",                "Terrain_Generic_Resource"),
+        ("CLASS_CULTURE",             "LOC_RUIVO_CLASS_CULTURE",             "Terrain_Generic_Resource"),
+        ("CLASS_GOLD",                "LOC_RUIVO_CLASS_GOLD",                "Terrain_Generic_Resource"),
+        ("CLASS_PRODUCTION",          "LOC_RUIVO_CLASS_PRODUCTION",          "Terrain_Generic_Resource"),
+        ("CLASS_SCIENCE",             "LOC_RUIVO_CLASS_SCIENCE",             "Terrain_Generic_Resource"),
+        ("CLASS_ORAL_TRADITION",      "LOC_RUIVO_CLASS_ORAL_TRADITION",      "Terrain_Generic_Resource"),
+        ("CLASS_GODDESS_OF_FESTIVALS","LOC_RUIVO_CLASS_GODDESS_OF_FESTIVALS","Terrain_Generic_Resource"),
+        ("CLASS_SEA",                 "LOC_RUIVO_CLASS_SEA",                 "Terrain_Sea"),
 
-        --地形函数
-        ("IsMountain",       "LOC_RUIVO_ISMOUNTAIN"),
-        ("IsHills",          "LOC_RUIVO_ISHILLS"),
-        ("IsFlatlands",      "LOC_RUIVO_ISFLATLANDS"),
-        ("IsWater",          "LOC_RUIVO_ISWATER"),
-        ("IsShallowWater",   "LOC_RUIVO_ISSHALLOWWATER"),
-        ("IsLake",           "LOC_RUIVO_ISLAKE"),
-        ("IsCanyon",         "LOC_RUIVO_ISCANYON"),
-        ("IsCoastalLand",    "LOC_RUIVO_ISCOASTALLAND"),
-        ("IsRiverCrossing",  "LOC_RUIVO_ISRIVERCROSSING"),
-        ("IsOpenGround",     "LOC_RUIVO_ISOPENGROUND"),
-        ("IsRoughGround",    "LOC_RUIVO_ISROUGHGROUND");
+        --地形函数 (FROM_RINGS_CAO_TERRAIN_SETS)
+        --  IsCanyon has no suitable base-game overlay icon
+        ("IsMountain",       "LOC_RUIVO_ISMOUNTAIN",       "Terrain_Mountain"),
+        ("IsHills",          "LOC_RUIVO_ISHILLS",          "Terrain_Plains_Hills"),
+        ("IsFlatlands",      "LOC_RUIVO_ISFLATLANDS",      "Terrain_Plains"),
+        ("IsWater",          "LOC_RUIVO_ISWATER",          "Terrain_Ocean"),
+        ("IsShallowWater",   "LOC_RUIVO_ISSHALLOWWATER",   "Terrain_Sea"),
+        ("IsLake",           "LOC_RUIVO_ISLAKE",           "Terrain_Coast"),
+        ("IsCanyon",         "LOC_RUIVO_ISCANYON",         NULL),
+        ("IsCoastalLand",    "LOC_RUIVO_ISCOASTALLAND",    "Terrain_Coast"),
+        ("IsRiverCrossing",  "LOC_RUIVO_ISRIVERCROSSING",  "Terrain_River"),
+        ("IsOpenGround",     "LOC_RUIVO_ISOPENGROUND",     "Terrain_Grass"),
+        ("IsRoughGround",    "LOC_RUIVO_ISROUGHGROUND",    "Terrain_Plains_Hills");
 --============================================================================================================================
 
 

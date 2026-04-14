@@ -477,9 +477,29 @@ function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:stri
 			local terrainRow = GameInfo.Terrains[eTerrain]
 			return terrainRow ~= nil and terrainRow.TerrainType == cao
 		end
+	elseif adjacencyType == "FROM_RINGS_CAO_RESOURCE_CLASS" then
+		local eResource = adjacentPlot:GetResourceType()
+		if eResource >= 0 then
+			local resType = ResourceTypeMap[eResource]
+			local resRow = GameInfo.Resources[resType]
+			return resRow ~= nil and resRow.ResourceClassType == cao
+		end
+	elseif adjacencyType == "FROM_RINGS_CAO_TERRAIN_SETS" then
+		if     cao == "IsMountain"      then return adjacentPlot:IsMountain()
+		elseif cao == "IsHills"         then return adjacentPlot:IsHills()
+		elseif cao == "IsFlatlands"     then return adjacentPlot:IsFlatlands()
+		elseif cao == "IsWater"         then return adjacentPlot:IsWater()
+		elseif cao == "IsShallowWater"  then return adjacentPlot:IsShallowWater()
+		elseif cao == "IsLake"          then return adjacentPlot:IsLake()
+		elseif cao == "IsCanyon"        then return adjacentPlot:IsCanyon()
+		elseif cao == "IsCoastalLand"   then return adjacentPlot:IsCoastalLand()
+		elseif cao == "IsRiverCrossing" then return adjacentPlot:IsRiverCrossing()
+		elseif cao == "IsOpenGround"    then return adjacentPlot:IsOpenGround()
+		elseif cao == "IsRoughGround"   then return adjacentPlot:IsRoughGround()
+		end
 	end
-	-- All other types (property-based, game-level, river crossing, wonder, etc.) do not
-	-- correspond to a single adjacent tile and will never produce an edge icon.
+	-- All other types (property-based, game-level, wonder, etc.) do not correspond to a
+	-- single adjacent tile and will never produce an edge icon.
 	return false
 end
 
