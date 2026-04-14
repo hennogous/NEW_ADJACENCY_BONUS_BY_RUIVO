@@ -106,7 +106,9 @@
         --不在进行规划时显示此加成（这个是针对单元格plot级别的，其他的本身就没打算显示在规划阶段）
         DoNotDisplayWhenPlacement BOOLEAN NOT NULL CHECK (DoNotDisplayWhenPlacement IN (0, 1)) DEFAULT 0, 
         --注意，这并不是相邻显示文本，只是介绍而已，不要去使用这个参数
-        Tooltip TEXT NOT NULL
+        Tooltip TEXT NOT NULL,
+        --放置时显示的边缘图标（Overlay.artdef 条目名称；NULL 表示无图标）
+        ArtdefOverlayEntry TEXT DEFAULT NULL
     );
     INSERT INTO Ruivo_AdjacencyType 
     (AdjacencyType, AttributeType, HasCustomAdjacentObject, Environment, CanDisplay, Tooltip) VALUES
@@ -301,6 +303,13 @@
 UPDATE Ruivo_AdjacencyType SET DoNotDisplayWhenPlacement = 1 WHERE AdjacencyType = 'FROM_SELF_WORKER';
 UPDATE Ruivo_AdjacencyType SET DoNotDisplayWhenPlacement = 1 WHERE AdjacencyType = 'FROM_ADJACENT_WORKER';
 UPDATE Ruivo_AdjacencyType SET DoNotDisplayWhenPlacement = 1 WHERE AdjacencyType = 'FROM_RINGS_WORKER';
+
+-- Tile-edge overlay icons for non-CAO adjacency types (parallel to Ruivo_CAO.ArtdefOverlayEntry)
+    UPDATE Ruivo_AdjacencyType SET ArtdefOverlayEntry = 'Terrain_River'              WHERE AdjacencyType = 'FROM_RIVER_CROSSING';
+    UPDATE Ruivo_AdjacencyType SET ArtdefOverlayEntry = 'Terrain_Generic_Resource'   WHERE AdjacencyType IN ('FROM_ADJACENT_RESOURCE', 'FROM_RINGS_RESOURCE');
+    UPDATE Ruivo_AdjacencyType SET ArtdefOverlayEntry = 'Terrain_Coast'              WHERE AdjacencyType IN ('FROM_ADJACENT_LAKE', 'FROM_RINGS_LAKE');
+    UPDATE Ruivo_AdjacencyType SET ArtdefOverlayEntry = 'Generic_Wonder'             WHERE AdjacencyType IN ('FROM_ADJACENT_WONDERS', 'FROM_RINGS_WONDERS');
+    UPDATE Ruivo_AdjacencyType SET ArtdefOverlayEntry = 'Districts_Generic_District' WHERE AdjacencyType IN ('FROM_ADJACENT_DISTRICT', 'FROM_RINGS_DISTRICT', 'FROM_ADJACENT_DISTRICT_AND_WONDER', 'FROM_RINGS_DISTRICT_AND_WONDER');
 --============================================================================================================================
 
 

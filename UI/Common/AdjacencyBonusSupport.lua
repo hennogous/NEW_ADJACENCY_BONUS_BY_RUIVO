@@ -29,20 +29,9 @@ end
 -- Allows mods to show tile-edge icons for their Ruivo adjacency types by setting ArtdefOverlayEntry in SQL.
 local m_CAO_Icons :table = {};
 
--- Default overlay icon for non-CAO adjacency types (no CustomAdjacentObject required).
-local m_AdjacencyType_DefaultIcons :table = {
-	FROM_ADJACENT_RESOURCE            = "Terrain_Generic_Resource",
-	FROM_ADJACENT_LAKE                = "Terrain_Coast",
-	FROM_ADJACENT_WONDERS             = "Generic_Wonder",
-	FROM_ADJACENT_DISTRICT            = "Districts_Generic_District",
-	FROM_ADJACENT_DISTRICT_AND_WONDER = "Districts_Generic_District",
-	FROM_RINGS_RESOURCE               = "Terrain_Generic_Resource",
-	FROM_RINGS_LAKE                   = "Terrain_Coast",
-	FROM_RINGS_WONDERS                = "Generic_Wonder",
-	FROM_RINGS_DISTRICT               = "Districts_Generic_District",
-	FROM_RINGS_DISTRICT_AND_WONDER    = "Districts_Generic_District",
-	FROM_RIVER_CROSSING               = "Terrain_River",
-};
+-- AdjacencyType → artdef overlay entry name for non-CAO types.
+-- Populated from Ruivo_AdjacencyType.ArtdefOverlayEntry on LoadGameViewStateDone.
+local m_AdjacencyType_Icons :table = {};
 
 -- ===========================================================================
 --	功能：获取用于显示在地块之间的小图标 ArtDef 字符串名称
@@ -76,7 +65,7 @@ function GetAdjacentIconArtdefName( targetDistrictType:string, plot:table, pkCit
 					-- Respect MustOwn: only show icon when the plot is owned by the city's player.
 					if row.MustOwn ~= 1 or plot:GetOwner() == pkCity:GetOwner() then
 						local cao = row.CustomAdjacentObject
-						local iconArtdef = (cao and m_CAO_Icons[cao]) or m_AdjacencyType_DefaultIcons[row.AdjacencyType]
+						local iconArtdef = (cao and m_CAO_Icons[cao]) or m_AdjacencyType_Icons[row.AdjacencyType]
 						if iconArtdef and PlotMatchesRuivoCAO(plot, row.AdjacencyType, cao) then
 							return iconArtdef
 						end
@@ -531,7 +520,7 @@ function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:stri
 	elseif adjacencyType == "FROM_ADJACENT_DISTRICT_AND_WONDER" or adjacencyType == "FROM_RINGS_DISTRICT_AND_WONDER" then
 		return adjacentPlot:GetDistrictType() >= 0
 	elseif adjacencyType == "FROM_RIVER_CROSSING" then
-		return adjacentPlot:IsRiverCrossing()
+		return adjacentPlot:GetRiverCrossingCount() > 0
 	end
 	-- All other types (property-based, game-level, etc.) do not correspond to a
 	-- single adjacent tile and will never produce an edge icon.
@@ -547,6 +536,12 @@ function BuildCAOIconLookup()
 	for row in GameInfo.Ruivo_CAO() do
 		if row.ArtdefOverlayEntry and row.ArtdefOverlayEntry ~= "" then
 			m_CAO_Icons[row.CustomAdjacentObject] = row.ArtdefOverlayEntry
+		end
+	end
+	m_AdjacencyType_Icons = {}
+	for row in GameInfo.Ruivo_AdjacencyType() do
+		if row.ArtdefOverlayEntry and row.ArtdefOverlayEntry ~= "" then
+			m_AdjacencyType_Icons[row.AdjacencyType] = row.ArtdefOverlayEntry
 		end
 	end
 end
