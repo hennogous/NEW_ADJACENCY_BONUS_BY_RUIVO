@@ -58,10 +58,13 @@ function GetAdjacentIconArtdefName( targetDistrictType:string, plot:table, pkCit
 				local minR = row.MinRings or 1
 				local maxR = row.MaxRings or row.Rings or 1
 				if minR == 1 and maxR == 1 then
-					local cao = row.CustomAdjacentObject
-					local iconArtdef = cao and m_CAO_Icons[cao]
-					if iconArtdef and PlotMatchesRuivoCAO(plot, row.AdjacencyType, cao) then
-						return iconArtdef
+					-- Respect MustOwn: only show icon when the plot is owned by the city's player.
+					if row.MustOwn ~= 1 or plot:GetOwner() == pkCity:GetOwner() then
+						local cao = row.CustomAdjacentObject
+						local iconArtdef = cao and m_CAO_Icons[cao]
+						if iconArtdef and PlotMatchesRuivoCAO(plot, row.AdjacencyType, cao) then
+							return iconArtdef
+						end
 					end
 				end
 			end
