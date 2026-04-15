@@ -359,10 +359,10 @@ UPDATE Ruivo_AdjacencyType SET DoNotDisplayWhenPlacement = 1 WHERE AdjacencyType
 --  NULL = 没有合适的基础游戏图标，或该 CAO 类型在放置时不产生边缘图标
     INSERT INTO Ruivo_CAO (CustomAdjacentObject, Name, ArtdefOverlayEntry) VALUES
         --资源class (FROM_RINGS_CAO_RESOURCE_CLASS)
-        ("RESOURCECLASS_BONUS",       "LOC_RUIVO_RESOURCECLASS_BONUS",       "Terrain_Generic_Resource_Class"),
-        ("RESOURCECLASS_LUXURY",      "LOC_RUIVO_RESOURCECLASS_LUXURY",      "Terrain_Generic_Resource_Class"),
-        ("RESOURCECLASS_STRATEGIC",   "LOC_RUIVO_RESOURCECLASS_STRATEGIC",   "Terrain_Generic_Resource_Class"),
-        ("RESOURCECLASS_ARTIFACT",    "LOC_RUIVO_RESOURCECLASS_ARTIFACT",    "Terrain_Generic_Resource_Class"),
+        ("RESOURCECLASS_BONUS",       "LOC_RUIVO_RESOURCECLASS_BONUS",       "Terrain_Generic_Resource"),
+        ("RESOURCECLASS_LUXURY",      "LOC_RUIVO_RESOURCECLASS_LUXURY",      "Terrain_Generic_Resource"),
+        ("RESOURCECLASS_STRATEGIC",   "LOC_RUIVO_RESOURCECLASS_STRATEGIC",   "Terrain_Generic_Resource"),
+        ("RESOURCECLASS_ARTIFACT",    "LOC_RUIVO_RESOURCECLASS_ARTIFACT",    "Terrain_Generic_Resource"),
 
         --资源tag (FROM_RINGS_TYPETAG_RESOURCE)
         ("CLASS_FOOD",                "LOC_RUIVO_CLASS_FOOD",                "Terrain_Generic_Resource"),
@@ -372,15 +372,15 @@ UPDATE Ruivo_AdjacencyType SET DoNotDisplayWhenPlacement = 1 WHERE AdjacencyType
         ("CLASS_SCIENCE",             "LOC_RUIVO_CLASS_SCIENCE",             "Terrain_Generic_Resource"),
         ("CLASS_ORAL_TRADITION",      "LOC_RUIVO_CLASS_ORAL_TRADITION",      "Terrain_Generic_Resource"),
         ("CLASS_GODDESS_OF_FESTIVALS","LOC_RUIVO_CLASS_GODDESS_OF_FESTIVALS","Terrain_Generic_Resource"),
-        ("CLASS_SEA",                 "LOC_RUIVO_CLASS_SEA",                 "Terrain_Sea"),
+        ("CLASS_SEA",                 "LOC_RUIVO_CLASS_SEA",                 "Terrain_Generic_Resource"),
 
         --地形函数 (FROM_RINGS_CAO_TERRAIN_SETS)
         --  IsCanyon has no suitable base-game overlay icon
         ("IsMountain",       "LOC_RUIVO_ISMOUNTAIN",       "Terrain_Mountain"),
         ("IsHills",          "LOC_RUIVO_ISHILLS",          "Terrain_Plains_Hills"),
         ("IsFlatlands",      "LOC_RUIVO_ISFLATLANDS",      "Terrain_Plains"),
-        ("IsWater",          "LOC_RUIVO_ISWATER",          "Terrain_Ocean"),
-        ("IsShallowWater",   "LOC_RUIVO_ISSHALLOWWATER",   "Terrain_Sea"),
+        ("IsWater",          "LOC_RUIVO_ISWATER",          "Terrain_Sea"),
+        ("IsShallowWater",   "LOC_RUIVO_ISSHALLOWWATER",   "Terrain_Coast"),
         ("IsLake",           "LOC_RUIVO_ISLAKE",           "Terrain_Coast"),
         ("IsCanyon",         "LOC_RUIVO_ISCANYON",         NULL),
         ("IsCoastalLand",    "LOC_RUIVO_ISCOASTALLAND",    "Terrain_Coast"),

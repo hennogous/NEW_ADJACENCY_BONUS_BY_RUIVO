@@ -33,6 +33,10 @@ local m_CAO_Icons :table = {};
 -- Populated from Ruivo_AdjacencyType.ArtdefOverlayEntry on LoadGameViewStateDone.
 local m_AdjacencyType_Icons :table = {};
 
+-- Resource type string → { Type="Tech"|"Civic", Index=number } for visibility checks.
+-- Populated in BuildCAOIconLookup(). Resources with no PrereqTech/PrereqCivic are always visible.
+local m_ResourceVisibility :table = {};
+
 -- ===========================================================================
 --	功能：获取用于显示在地块之间的小图标 ArtDef 字符串名称
 --	参数：
@@ -454,6 +458,25 @@ end
 --		buildingHash: 奇观（建筑）类型的 Hash 值
 -- ===========================================================================
 -- ===========================================================================
+--	Returns true if the local player has the tech/civic required to see eResource
+--	(an integer resource index). Resources with no prerequisite are always visible.
+-- ===========================================================================
+local function IsResourceVisibleToLocalPlayer( eResource:number )
+	local resRow = GameInfo.Resources[eResource]
+	if not resRow then return false end
+	local visInfo = m_ResourceVisibility[resRow.ResourceType]
+	if not visInfo then return true end   -- no prerequisite → always visible
+	local pPlayer = Players[Game.GetLocalPlayer()]
+	if not pPlayer then return true end
+	if visInfo.Type == "Tech" then
+		return pPlayer:GetTechs():HasTech(visInfo.Index)
+	elseif visInfo.Type == "Civic" then
+		return pPlayer:GetCulture():HasCivic(visInfo.Index)
+	end
+	return true
+end
+
+-- ===========================================================================
 --	功能：判断相邻地块是否匹配 Ruivo 相邻规则中的 CustomAdjacentObject
 --	说明：仅处理单地块可判断的 CAO 类型；属性类、游戏级、河流等类型不对应
 --	      单一地块，故意不处理，直接返回 false。
@@ -461,14 +484,14 @@ end
 function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:string, direction:number )
 	if adjacencyType == "FROM_RINGS_TYPETAG_RESOURCE" then
 		local eResource = adjacentPlot:GetResourceType()
-		if eResource >= 0 then
+		if eResource >= 0 and IsResourceVisibleToLocalPlayer(eResource) then
 			local resType = ResourceTypeMap[eResource]
 			-- TypeTagsMap structure: [tag][resourceType] = true
 			return TypeTagsMap[cao] ~= nil and TypeTagsMap[cao][resType] == true
 		end
 	elseif adjacencyType == "FROM_RINGS_CAO_RESOURCE" then
 		local eResource = adjacentPlot:GetResourceType()
-		return eResource >= 0 and ResourceTypeMap[eResource] == cao
+		return eResource >= 0 and IsResourceVisibleToLocalPlayer(eResource) and ResourceTypeMap[eResource] == cao
 	elseif adjacencyType == "FROM_RINGS_CAO_IMPROVEMENT" then
 		local eImprv = adjacentPlot:GetImprovementType()
 		return eImprv >= 0 and ImprovementTypeMap[eImprv] == cao
@@ -486,7 +509,7 @@ function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:stri
 		end
 	elseif adjacencyType == "FROM_RINGS_CAO_RESOURCE_CLASS" then
 		local eResource = adjacentPlot:GetResourceType()
-		if eResource >= 0 then
+		if eResource >= 0 and IsResourceVisibleToLocalPlayer(eResource) then
 			local resType = ResourceTypeMap[eResource]
 			local resRow = GameInfo.Resources[resType]
 			return resRow ~= nil and resRow.ResourceClassType == cao
@@ -505,7 +528,8 @@ function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:stri
 		elseif cao == "IsRoughGround"   then return adjacentPlot:IsRoughGround()
 		end
 	elseif adjacencyType == "FROM_ADJACENT_RESOURCE" or adjacencyType == "FROM_RINGS_RESOURCE" then
-		return adjacentPlot:GetResourceType() >= 0
+		local eR = adjacentPlot:GetResourceType()
+		return eR >= 0 and IsResourceVisibleToLocalPlayer(eR)
 	elseif adjacencyType == "FROM_ADJACENT_LAKE" or adjacencyType == "FROM_RINGS_LAKE" then
 		return adjacentPlot:IsLake()
 	elseif adjacencyType == "FROM_ADJACENT_WONDERS" or adjacencyType == "FROM_RINGS_WONDERS" then
@@ -554,6 +578,20 @@ end
 --	时机：在 LoadGameViewStateDone 时调用，与 STAT_Initialize 同时触发
 -- ===========================================================================
 function BuildCAOIconLookup()
+	m_ResourceVisibility = {}
+	for row in GameInfo.Resources() do
+		if row.PrereqTech then
+			local techInfo = GameInfo.Technologies[row.PrereqTech]
+			if techInfo then
+				m_ResourceVisibility[row.ResourceType] = { Type = "Tech", Index = techInfo.Index }
+			end
+		elseif row.PrereqCivic then
+			local civicInfo = GameInfo.Civics[row.PrereqCivic]
+			if civicInfo then
+				m_ResourceVisibility[row.ResourceType] = { Type = "Civic", Index = civicInfo.Index }
+			end
+		end
+	end
 	m_CAO_Icons = {}
 	for row in GameInfo.Ruivo_CAO() do
 		if row.ArtdefOverlayEntry and row.ArtdefOverlayEntry ~= "" then
