@@ -544,27 +544,19 @@ function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:stri
 	elseif adjacencyType == "FROM_ADJACENT_DISTRICT_AND_WONDER" or adjacencyType == "FROM_RINGS_DISTRICT_AND_WONDER" then
 		return adjacentPlot:GetDistrictType() >= 0
 	elseif adjacencyType == "FROM_RIVER_CROSSING" then
-		-- Rivers are stored directionally: W/NW/NE edges live on the lower-left plot of the edge.
-		-- For EAST/SE/SW the river flag is on the adjacent plot; for NE/W/NW it is on the centre plot.
+		-- Each Civ VI river flag (IsWOfRiver / IsNEOfRiver / IsNWOfRiver) is stored on exactly one tile.
+		-- AddAdjacentPlotBonuses fires for every valid placement tile simultaneously, so checking all
+		-- 6 directions hits the same physical edge twice (once from each bordering tile) and produces
+		-- mirrored duplicate icons pointing in opposite directions on the same edge.
+		--
+		-- Fix: only fire for the 3 directions where the flag lives on the adjacent tile.
+		-- The other 3 edges (NE/W/NW from this tile's perspective) are covered when the tile on the
+		-- far side of those edges is itself a valid placement candidate — its SW/E/SE check fires
+		-- and places a single correctly-directed icon. Every river edge gets exactly one icon,
+		-- always pointing from the adjacent tile toward the placement tile.
 		if     direction == DirectionTypes.DIRECTION_EAST      then return adjacentPlot:IsWOfRiver()
 		elseif direction == DirectionTypes.DIRECTION_SOUTHEAST then return adjacentPlot:IsNWOfRiver()
 		elseif direction == DirectionTypes.DIRECTION_SOUTHWEST then return adjacentPlot:IsNEOfRiver()
-		else
-			-- NE/W/NW: river flag lives on the centre (placement) tile — derive it from adjacent + opposite dir.
-			local oppDir
-			if     direction == DirectionTypes.DIRECTION_NORTHEAST then oppDir = DirectionTypes.DIRECTION_SOUTHWEST
-			elseif direction == DirectionTypes.DIRECTION_WEST       then oppDir = DirectionTypes.DIRECTION_EAST
-			elseif direction == DirectionTypes.DIRECTION_NORTHWEST  then oppDir = DirectionTypes.DIRECTION_SOUTHEAST
-			end
-			if oppDir then
-				local centrePlot = Map.GetAdjacentPlot(adjacentPlot:GetX(), adjacentPlot:GetY(), oppDir)
-				if centrePlot then
-					if     direction == DirectionTypes.DIRECTION_NORTHEAST then return centrePlot:IsNEOfRiver()
-					elseif direction == DirectionTypes.DIRECTION_WEST       then return centrePlot:IsWOfRiver()
-					elseif direction == DirectionTypes.DIRECTION_NORTHWEST  then return centrePlot:IsNWOfRiver()
-					end
-				end
-			end
 		end
 		return false
 	end
