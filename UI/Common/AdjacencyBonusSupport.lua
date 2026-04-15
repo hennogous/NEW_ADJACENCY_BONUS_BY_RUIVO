@@ -46,7 +46,7 @@ local m_ResourceVisibility :table = {};
 --		direction: 相邻方向
 --	返回：图标的 ArtDef 字符串名称（例如 "Terrain_Forest"），如果无加成则返回空字符串
 -- ===========================================================================
-function GetAdjacentIconArtdefName( targetDistrictType:string, plot:table, pkCity:table, direction:number )
+function GetAdjacentIconArtdefName( targetDistrictType:string, plot:table, pkCity:table, direction:number, placementPlot:table )
 
 	local eDistrict = GameInfo.Districts[targetDistrictType].Index;
 	local eType = -1;
@@ -70,7 +70,7 @@ function GetAdjacentIconArtdefName( targetDistrictType:string, plot:table, pkCit
 					if row.MustOwn ~= 1 or plot:GetOwner() == pkCity:GetOwner() then
 						local cao = row.CustomAdjacentObject
 						local iconArtdef = (cao and m_CAO_Icons[cao]) or m_AdjacencyType_Icons[row.AdjacencyType]
-						if iconArtdef and PlotMatchesRuivoCAO(plot, row.AdjacencyType, cao, direction) then
+						if iconArtdef and PlotMatchesRuivoCAO(plot, row.AdjacencyType, cao, direction, placementPlot) then
 							return iconArtdef
 						end
 					end
@@ -149,7 +149,7 @@ function AddAdjacentPlotBonuses( kPlot:table, districtType:string, pSelectedCity
 			local adjacentPlot	:table= Map.GetAdjacentPlot( x, y, direction);
 			if adjacentPlot ~= nil then
 				-- 获取该方向上相邻地块对应的加成图标名称
-				local artdefIconName:string = GetAdjacentIconArtdefName( districtType, adjacentPlot, pSelectedCity, direction );
+				local artdefIconName:string = GetAdjacentIconArtdefName( districtType, adjacentPlot, pSelectedCity, direction, kPlot );
 			
 				if artdefIconName ~= nil and artdefIconName ~= "" then
 		
@@ -481,7 +481,7 @@ end
 --	说明：仅处理单地块可判断的 CAO 类型；属性类、游戏级、河流等类型不对应
 --	      单一地块，故意不处理，直接返回 false。
 -- ===========================================================================
-function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:string, direction:number )
+function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:string, direction:number, placementPlot:table )
 	if adjacencyType == "FROM_RINGS_TYPETAG_RESOURCE" then
 		local eResource = adjacentPlot:GetResourceType()
 		if eResource >= 0 and IsResourceVisibleToLocalPlayer(eResource) then
@@ -545,18 +545,19 @@ function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:stri
 		return adjacentPlot:GetDistrictType() >= 0
 	elseif adjacencyType == "FROM_RIVER_CROSSING" then
 		-- Each Civ VI river flag (IsWOfRiver / IsNEOfRiver / IsNWOfRiver) is stored on exactly one tile.
-		-- AddAdjacentPlotBonuses fires for every valid placement tile simultaneously, so checking all
-		-- 6 directions hits the same physical edge twice (once from each bordering tile) and produces
-		-- mirrored duplicate icons pointing in opposite directions on the same edge.
-		--
-		-- Fix: only fire for the 3 directions where the flag lives on the adjacent tile.
-		-- The other 3 edges (NE/W/NW from this tile's perspective) are covered when the tile on the
-		-- far side of those edges is itself a valid placement candidate — its SW/E/SE check fires
-		-- and places a single correctly-directed icon. Every river edge gets exactly one icon,
-		-- always pointing from the adjacent tile toward the placement tile.
+		-- For the 3 directions where the flag lives on the adjacent tile, check adjacentPlot directly.
+		-- For the 3 directions where the flag lives on the placement tile, check placementPlot directly
+		-- (passed from AddAdjacentPlotBonuses as kPlot — no Map.GetAdjacentPlot derivation needed).
+		-- This ensures every river edge of the placement tile shows an icon regardless of whether the
+		-- tile on the other side of that edge is itself a valid placement candidate.
 		if     direction == DirectionTypes.DIRECTION_EAST      then return adjacentPlot:IsWOfRiver()
 		elseif direction == DirectionTypes.DIRECTION_SOUTHEAST then return adjacentPlot:IsNWOfRiver()
 		elseif direction == DirectionTypes.DIRECTION_SOUTHWEST then return adjacentPlot:IsNEOfRiver()
+		elseif placementPlot ~= nil then
+			if     direction == DirectionTypes.DIRECTION_NORTHEAST then return placementPlot:IsNEOfRiver()
+			elseif direction == DirectionTypes.DIRECTION_WEST      then return placementPlot:IsWOfRiver()
+			elseif direction == DirectionTypes.DIRECTION_NORTHWEST then return placementPlot:IsNWOfRiver()
+			end
 		end
 		return false
 	end
