@@ -548,27 +548,20 @@ function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:stri
 		-- e.g. IsWOfRiver() = tile is WEST of the river = river is on the tile's EAST edge.
 		-- Confirmed by Wetlands_FeatureGenerator.lua ("check in east: plot:IsWOfRiver()").
 		--
-		-- For E/SE/SW the river flag lives on the placement tile itself — only it fires, no duplicates.
-		-- When a valid neighbour Q fires the opposite direction, it uses Q's own E/SE/SW flags
-		-- (different flags, different edges) so there is no collision.
+		-- For E/SE/SW the flag lives on the placement tile (P's own edges).
+		-- For NE/W/NW the flag lives on the adjacent tile (its corresponding E/SE/SW edge).
 		--
-		-- For NE/W/NW the flag lives on the adjacent tile. Normally covered by that tile's own
-		-- E/SE/SW processing when it is itself a valid placement candidate. Fire from P's side
-		-- only as a fallback when the adjacent tile is blocked (mountain / water / existing district).
+		-- When two valid tiles P and Q share a river edge, P fires EAST (icon on Q's face toward P)
+		-- and Q fires WEST (icon on P's face toward Q). These land on DIFFERENT faces — no visual
+		-- duplicate — so no deduplication guard is needed. Each placement tile independently shows
+		-- all six of its river edges.
 		if placementPlot ~= nil then
 			if     direction == DirectionTypes.DIRECTION_EAST      then return placementPlot:IsWOfRiver()
 			elseif direction == DirectionTypes.DIRECTION_SOUTHEAST then return placementPlot:IsNWOfRiver()
 			elseif direction == DirectionTypes.DIRECTION_SOUTHWEST then return placementPlot:IsNEOfRiver()
-			else
-				local adjBlocked = adjacentPlot:IsMountain()
-				                or adjacentPlot:IsWater()
-				                or adjacentPlot:GetDistrictType() >= 0
-				if adjBlocked then
-					if     direction == DirectionTypes.DIRECTION_NORTHEAST then return adjacentPlot:IsNEOfRiver()
-					elseif direction == DirectionTypes.DIRECTION_WEST      then return adjacentPlot:IsWOfRiver()
-					elseif direction == DirectionTypes.DIRECTION_NORTHWEST then return adjacentPlot:IsNWOfRiver()
-					end
-				end
+			elseif direction == DirectionTypes.DIRECTION_NORTHEAST then return adjacentPlot:IsNEOfRiver()
+			elseif direction == DirectionTypes.DIRECTION_WEST      then return adjacentPlot:IsWOfRiver()
+			elseif direction == DirectionTypes.DIRECTION_NORTHWEST then return adjacentPlot:IsNWOfRiver()
 			end
 		end
 		return false
