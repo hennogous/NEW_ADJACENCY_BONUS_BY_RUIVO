@@ -544,19 +544,35 @@ function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:stri
 	elseif adjacencyType == "FROM_ADJACENT_DISTRICT_AND_WONDER" or adjacencyType == "FROM_RINGS_DISTRICT_AND_WONDER" then
 		return adjacentPlot:GetDistrictType() >= 0
 	elseif adjacencyType == "FROM_RIVER_CROSSING" then
-		-- Each Civ VI river flag (IsWOfRiver / IsNEOfRiver / IsNWOfRiver) is stored on exactly one tile.
-		-- For the 3 directions where the flag lives on the adjacent tile, check adjacentPlot directly.
-		-- For the 3 directions where the flag lives on the placement tile, check placementPlot directly
-		-- (passed from AddAdjacentPlotBonuses as kPlot — no Map.GetAdjacentPlot derivation needed).
-		-- This ensures every river edge of the placement tile shows an icon regardless of whether the
-		-- tile on the other side of that edge is itself a valid placement candidate.
+		-- Civ VI stores each river edge as a flag on exactly ONE tile:
+		--   IsWOfRiver()  on the tile whose WEST edge is the river (flag-owner = east tile)
+		--   IsNEOfRiver() on the tile whose NE edge is the river   (flag-owner = SW tile)
+		--   IsNWOfRiver() on the tile whose NW edge is the river   (flag-owner = SE tile)
+		--
+		-- AddAdjacentPlotBonuses fires for every valid placement tile simultaneously. If we
+		-- checked all 6 directions naively we would hit the same physical edge from both sides
+		-- and produce mirrored duplicate icons. The canonical rule: for each flag, the icon is
+		-- shown by the tile on the NON-owner side (always E/SE/SW from the placement tile).
+		--
+		-- Exception: if the adjacent tile is impassable or already occupied (mountain, water,
+		-- existing district) it will never be processed as a placement candidate, so its E/SE/SW
+		-- check for the shared edge will never run. In those cases we fire from the placement
+		-- tile's NE/W/NW perspective using placementPlot's own flags — no duplication risk since
+		-- the blocked tile won't fire anything back.
 		if     direction == DirectionTypes.DIRECTION_EAST      then return adjacentPlot:IsWOfRiver()
 		elseif direction == DirectionTypes.DIRECTION_SOUTHEAST then return adjacentPlot:IsNWOfRiver()
 		elseif direction == DirectionTypes.DIRECTION_SOUTHWEST then return adjacentPlot:IsNEOfRiver()
 		elseif placementPlot ~= nil then
-			if     direction == DirectionTypes.DIRECTION_NORTHEAST then return placementPlot:IsNEOfRiver()
-			elseif direction == DirectionTypes.DIRECTION_WEST      then return placementPlot:IsWOfRiver()
-			elseif direction == DirectionTypes.DIRECTION_NORTHWEST then return placementPlot:IsNWOfRiver()
+			-- NE/W/NW: only fire when the adjacent tile is blocked and therefore won't handle
+			-- this edge itself via its own E/SE/SW canonical check.
+			local adjBlocked = adjacentPlot:IsMountain()
+			              or adjacentPlot:IsWater()
+			              or adjacentPlot:GetDistrictType() >= 0
+			if adjBlocked then
+				if     direction == DirectionTypes.DIRECTION_NORTHEAST then return placementPlot:IsNEOfRiver()
+				elseif direction == DirectionTypes.DIRECTION_WEST      then return placementPlot:IsWOfRiver()
+				elseif direction == DirectionTypes.DIRECTION_NORTHWEST then return placementPlot:IsNWOfRiver()
+				end
 			end
 		end
 		return false
