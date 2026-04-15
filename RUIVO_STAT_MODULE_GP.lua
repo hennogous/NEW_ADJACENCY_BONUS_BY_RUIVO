@@ -3910,7 +3910,7 @@ local m_ResourceVisibility = {}
                     if iBonus ~= 0 and bShowInIcon then
                         --提供相邻加成已弃用，只有自己的相邻加成
                         if row.ProvideType ~= 'ProvideToADJ' then
-                            local numText = tostring(iBonus)
+                            local numText = (iBonus > 0 and "+" or "") .. tostring(iBonus)
                             local yieldIcon = RUIVO_GetYieldTextIcon(yieldType)..RUIVO_GetYieldText(yieldType, ProvideType)
                             local customAdjObj = row.CustomAdjacentObject
                             local newAdjTextRow = GameInfo.Ruivo_New_Adjacency_Text[row.ID]
