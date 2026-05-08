@@ -1,4 +1,4 @@
-﻿include("RUIVO_STAT_MODULE_GP.lua");
+include("RUIVO_STAT_MODULE_GP.lua");
 
 --============================================================================================================================
 -- SetProperty事件函数
@@ -28,8 +28,7 @@
 
         -- 计算实际总数
         local ActualAmountKey = ID .. '_ACTUAL_AMOUNT'
-        local ActualAmount = iBonus * YieldChange
-        ActualAmount = math.floor(ActualAmount) -- 确保是整数
+        local ActualAmount = truncate(iBonus * YieldChange) -- 确保是整数且向 0 取整
         pPlot:SetProperty(ActualAmountKey, ActualAmount)
         --print(ActualAmountKey, tostring(pPlot:GetProperty(ActualAmountKey))) -- 输出检查
 

@@ -65,7 +65,8 @@ function GetAdjacentIconArtdefName( targetDistrictType:string, plot:table, pkCit
 			for _, row in ipairs(cachedEntries) do
 				local minR = row.MinRings or 1
 				local maxR = row.MaxRings or row.Rings or 1
-				if minR == 1 and maxR == 1 then
+				-- Only show edge icons for the first ring (distance 1) if it's within the rule's range.
+				if minR <= 1 and maxR >= 1 then
 					-- Respect MustOwn: only show icon when the plot is owned by the city's player.
 					if row.MustOwn ~= 1 or plot:GetOwner() == pkCity:GetOwner() then
 						local cao = row.CustomAdjacentObject

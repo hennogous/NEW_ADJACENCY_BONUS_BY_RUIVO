@@ -11,45 +11,54 @@ TypeTagsMap = {}
 --============================================================================================================================
 --小工具部分
 --==============================================
---广度优先搜索：获取从 (iX, iY) 出发，距离不超过 maxRing 的所有单元格（排除中心单元格）
+--广度优先搜索：获取从 (iX, iY) 出发，距离在 [minRing, maxRing] 范围内的所有单元格
     function RuivoGetRingPlotIndexes(iX, iY, minRing, maxRing)
         local resultPlotIndex = {}   -- 存储最终结果的格子索引列表
-        local visited = {}           -- 标记已经访问过的格子，防止重复访问
-        local queue = {}             -- 用于广度优先搜索的队列（FIFO）
+        local visited = {}           -- 标记已经访问过的格子
+        local queue = {}             -- 用于广度优先搜索的队列
 
-        local centerPlot = Map.GetPlot(iX, iY)  -- 获取中心格对象
-        if not centerPlot then return resultPlotIndex end  -- 如果中心格无效，返回空结果
+        local centerPlot = Map.GetPlot(iX, iY)
+        if not centerPlot then return resultPlotIndex end
 
-        local centerIndex = centerPlot:GetIndex()  -- 获取中心格的索引
-        visited[centerIndex] = true                -- 标记中心格为已访问
-        if minRing == 0 then table.insert(resultPlotIndex, centerIndex) end -- 0环时包含中心格
-        table.insert(queue, centerIndex)           -- 加入队列，开始BFS搜索
+        local centerIndex = centerPlot:GetIndex()
+        visited[centerIndex] = true
+        if minRing == 0 then table.insert(resultPlotIndex, centerIndex) end
+        table.insert(queue, centerIndex)
 
-        -- 广度优先搜索，逐层扩展格子
-        while #queue > 0 do
-            local currentIndex = table.remove(queue, 1)        -- 取出当前处理的格子索引
-            local plot = Map.GetPlotByIndex(currentIndex)      -- 获取对应格子对象
-            local dist = Map.GetPlotDistance(iX, iY, plot:GetX(), plot:GetY()) -- 计算该格子与中心格的距离
+        local head = 1 -- 队列头指针，避免 table.remove(1) 的 O(n) 开销
+        while head <= #queue do
+            local currentIndex = queue[head]
+            head = head + 1
+            
+            local plot = Map.GetPlotByIndex(currentIndex)
+            local dist = Map.GetPlotDistance(iX, iY, plot:GetX(), plot:GetY())
 
-            -- 如果该格子在 maxRing 范围内，继续扩展它的相邻格子
             if dist < maxRing then
-                local adjPlots = Map.GetAdjacentPlots(plot:GetX(), plot:GetY()) -- 获取相邻格子
+                local adjPlots = Map.GetAdjacentPlots(plot:GetX(), plot:GetY())
                 for _, adj in ipairs(adjPlots) do
                     if adj then
-                        local adjIndex = adj:GetIndex()  -- 获取相邻格子的索引
-                        if not visited[adjIndex] then   -- 如果未访问过
-                            visited[adjIndex] = true    -- 标记为已访问
-                            if Map.GetPlotDistance(iX, iY, adj:GetX(), adj:GetY()) >= minRing then
-                                table.insert(resultPlotIndex, adjIndex) -- 仅环带内的格子加入结果列表
+                        local adjIndex = adj:GetIndex()
+                        if not visited[adjIndex] then
+                            visited[adjIndex] = true
+                            local adjDist = Map.GetPlotDistance(iX, iY, adj:GetX(), adj:GetY())
+                            if adjDist >= minRing and adjDist <= maxRing then
+                                table.insert(resultPlotIndex, adjIndex)
                             end
-                            table.insert(queue, adjIndex)           -- 加入队列以便后续扩展
+                            -- 只有当距离小于 maxRing 时才需要继续从该点向外搜索
+                            if adjDist < maxRing then
+                                table.insert(queue, adjIndex)
+                            end
                         end
                     end
                 end
             end
         end
 
-        return resultPlotIndex  -- 返回所有在 maxRing 范围内的格子索引
+        return resultPlotIndex
+    end
+-- 截断取整（向 0 取整）
+    function truncate(v)
+        return v > 0 and math.floor(v) or math.ceil(v)
     end
 --==============================================
 --是否有领袖特质
@@ -3859,7 +3868,7 @@ local m_ResourceVisibility = {}
                     local ok, result = pcall(StatsModule_For_Display, row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pkCity, row.MinRings, row.MaxRings, row.MustOwn)
                     local iBonus = ok and result or -1
                     local AdjacentSubjectNum = iBonus --缓存相邻对象数量
-                    iBonus = math.floor(iBonus * row.YieldChange)
+                    iBonus = truncate(iBonus * row.YieldChange)
                     if AdjacentSubjectNum == -1 then iBonus = 0 end -- StatsModule error sentinel
                     iBonus = math.max(math.min(iBonus, maxNum), -maxNum)
 
