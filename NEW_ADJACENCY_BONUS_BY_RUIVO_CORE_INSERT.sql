@@ -6,8 +6,8 @@
 --============================================================================================================================
 --补充给UD： ApplyForUniqueDistricts 参数
     INSERT OR IGNORE INTO Ruivo_New_Adjacency
-    (                                        ID,             DistrictType,     TraitType, ApplyForUniqueDistricts,       NewMethod,       ProvideType,       YieldType,       CustomArgumentValue,       YieldChange,       AdjacencyType,       CustomAdjacentObject,       Rings,       MinRings,       MaxRings,       MustOwn,       ModifierOwner,       WhoIsTheOwner,       CollectionType,       Only,       FreeCompose) SELECT
-    DR.CivUniqueDistrictType || "_" || Ruivo.ID, DR.CivUniqueDistrictType, Dis.TraitType,                       0, Ruivo.NewMethod, Ruivo.ProvideType, Ruivo.YieldType, Ruivo.CustomArgumentValue, Ruivo.YieldChange, Ruivo.AdjacencyType, Ruivo.CustomAdjacentObject, Ruivo.Rings, Ruivo.MinRings, Ruivo.MaxRings, Ruivo.MustOwn, Ruivo.ModifierOwner, Ruivo.WhoIsTheOwner, Ruivo.CollectionType, Ruivo.Only, Ruivo.FreeCompose
+    (                                        ID,             DistrictType,     TraitType, ApplyForUniqueDistricts,       NewMethod,       ProvideType,       YieldType,       CustomArgumentValue,       YieldChange,       AdjacencyType,       CustomAdjacentObject,       Rings,       MinRings,       MaxRings,       MustOwn,       DistrictModifiers,       ModifierOwner,       WhoIsTheOwner,       CollectionType,       Only,       FreeCompose) SELECT
+    DR.CivUniqueDistrictType || "_" || Ruivo.ID, DR.CivUniqueDistrictType, Dis.TraitType,                       0, Ruivo.NewMethod, Ruivo.ProvideType, Ruivo.YieldType, Ruivo.CustomArgumentValue, Ruivo.YieldChange, Ruivo.AdjacencyType, Ruivo.CustomAdjacentObject, Ruivo.Rings, Ruivo.MinRings, Ruivo.MaxRings, Ruivo.MustOwn, Ruivo.DistrictModifiers, Ruivo.ModifierOwner, Ruivo.WhoIsTheOwner, Ruivo.CollectionType, Ruivo.Only, Ruivo.FreeCompose
 
     FROM Districts AS d                                                     --遍历区域表
     JOIN DistrictReplaces DR ON d.DistrictType = DR.ReplacesDistrictType    --取代区域为对应区域
