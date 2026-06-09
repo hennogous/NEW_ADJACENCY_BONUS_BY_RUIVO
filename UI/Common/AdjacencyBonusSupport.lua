@@ -502,6 +502,13 @@ function PlotMatchesRuivoCAO( adjacentPlot:table, adjacencyType:string, cao:stri
 	elseif adjacencyType == "FROM_RINGS_CAO_DISTRICT" then
 		local eDist = adjacentPlot:GetDistrictType()
 		return eDist >= 0 and DistrictTypeMap[eDist] == cao
+	elseif adjacencyType == "FROM_RINGS_TYPETAG_DISTRICT" then
+		local eDist = adjacentPlot:GetDistrictType()
+		if eDist >= 0 then
+			local distType = DistrictTypeMap[eDist]
+			-- TypeTagsMap structure: [tag][type] = true
+			return TypeTagsMap[cao] ~= nil and TypeTagsMap[cao][distType] == true
+		end
 	elseif adjacencyType == "FROM_RINGS_CAO_TERRAIN" then
 		local eTerrain = adjacentPlot:GetTerrainType()
 		if eTerrain >= 0 then

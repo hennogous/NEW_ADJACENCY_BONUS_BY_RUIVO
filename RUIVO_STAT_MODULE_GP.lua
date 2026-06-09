@@ -1889,6 +1889,40 @@ local m_ResourceVisibility = {}
         end
         return Count
     end
+--统计模块-> 指定环数内属于某tag的区域数量
+    function FROM_RINGS_TYPETAG_DISTRICT(iX, iY, MinRings, MaxRings, CustomAdjacentObject, pCity, MustOwn)
+        local Count = 0
+        local pCenterPlot = Map.GetPlot(iX, iY)
+        local tag = CustomAdjacentObject
+        local iOwnerFilter = (MustOwn == 1) and (pCity and pCity:GetOwner() or GetPlayerIDFromPlot(iX, iY)) or nil
+
+        -- 确认 tag 合法，且是区域类
+        local tagInfo = GameInfo.Tags[tag]
+        if tagInfo == nil or tagInfo.Vocabulary ~= "DISTRICT_CLASS" then
+            return 0
+        end
+
+        if MaxRings > 0 then
+            local resultPlotIndex = RuivoGetRingPlotIndexes(iX, iY, MinRings, MaxRings)
+            for _, PlotIndex in ipairs(resultPlotIndex) do
+                local plot = Map.GetPlotByIndex(PlotIndex)
+                if plot and (not iOwnerFilter or plot:GetOwner() == iOwnerFilter) and plot:GetDistrictType() ~= -1 then
+                    local DistrictType = DistrictTypeMap[plot:GetDistrictType()]
+                    if TypeTagsMap[tag] and TypeTagsMap[tag][DistrictType] then
+                        Count = Count + 1
+                    end
+                end
+            end
+        elseif MaxRings == 0 then
+            if pCenterPlot and (not iOwnerFilter or pCenterPlot:GetOwner() == iOwnerFilter) and pCenterPlot:GetDistrictType() ~= -1 then
+                local DistrictType = DistrictTypeMap[pCenterPlot:GetDistrictType()]
+                if TypeTagsMap[tag] and TypeTagsMap[tag][DistrictType] then
+                    Count = Count + 1
+                end
+            end
+        end
+        return Count
+    end
 --统计模块-> 指定环数内指定地貌数量
     function FROM_RINGS_CAO_FEATURE(iX, iY, MinRings, MaxRings, CustomAdjacentObject, pCity, MustOwn)
         local Count = 0
@@ -4359,6 +4393,7 @@ local m_ResourceVisibility = {}
             ['FROM_RINGS_CAO_RESOURCE'] = FROM_RINGS_CAO_RESOURCE,
             ['FROM_RINGS_CAO_IMPROVEMENT'] = FROM_RINGS_CAO_IMPROVEMENT,
             ['FROM_RINGS_CAO_DISTRICT'] = FROM_RINGS_CAO_DISTRICT,
+            ['FROM_RINGS_TYPETAG_DISTRICT'] = FROM_RINGS_TYPETAG_DISTRICT,
             ['FROM_RINGS_CAO_FEATURE'] = FROM_RINGS_CAO_FEATURE,
             ['FROM_RINGS_CAO_TERRAIN_SETS'] = FROM_RINGS_CAO_TERRAIN_SETS,
             ['FROM_RINGS_CAO_TERRAIN'] = FROM_RINGS_CAO_TERRAIN,

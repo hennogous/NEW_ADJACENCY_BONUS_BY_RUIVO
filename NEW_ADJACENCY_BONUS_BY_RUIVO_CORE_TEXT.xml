@@ -197,6 +197,9 @@
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_DISTRICT" Language="zh_Hans_CN">
 			<Text>+{1_iBonus} {2_YieldIcon}，来自相邻范围内{3_AdjacentSubjectNum}个 {4_CAO} 区域。</Text>
 		</Row>
+		<Row Tag="LOC_RUIVO_FROM_RINGS_TYPETAG_DISTRICT" Language="zh_Hans_CN">
+			<Text>+{1_iBonus} {2_YieldIcon}，来自相邻范围内{3_AdjacentSubjectNum}个 {4_CAO} 区域。</Text>
+		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_FEATURE" Language="zh_Hans_CN">
 			<Text>+{1_iBonus} {2_YieldIcon}，来自相邻范围内{3_AdjacentSubjectNum}个 {4_CAO} 地貌。</Text>
 		</Row>

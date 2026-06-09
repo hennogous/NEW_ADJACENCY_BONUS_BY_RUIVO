@@ -204,6 +204,9 @@
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_DISTRICT" Language="en_US">
 			<Text>{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?district; other?districts;}.</Text>
 		</Row>
+		<Row Tag="LOC_RUIVO_FROM_RINGS_TYPETAG_DISTRICT" Language="en_US">
+			<Text>{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?district; other?districts;}.</Text>
+		</Row>
 		<Row Tag="LOC_RUIVO_FROM_RINGS_CAO_FEATURE" Language="en_US">
 			<Text>{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum : plural 1?the; other?{3_AdjacentSubjectNum};} {5_sDistance} {4_CAO} {3_AdjacentSubjectNum : plural 1?feature; other?features;}.</Text>
 		</Row>

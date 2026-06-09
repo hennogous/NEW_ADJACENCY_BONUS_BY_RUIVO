@@ -179,6 +179,7 @@
     ('FROM_RINGS_CAO_RESOURCE',             'Plot', 1, 'GamePlay', 1, '环数内的指定资源'),
     ('FROM_RINGS_CAO_IMPROVEMENT',          'Plot', 1, 'GamePlay', 1, '环数内的指定改良'),
     ('FROM_RINGS_CAO_DISTRICT',             'Plot', 1, 'GamePlay', 1, '环数内的指定区域'),
+    ('FROM_RINGS_TYPETAG_DISTRICT',         'Plot', 1, 'GamePlay', 1, '环数内的指定tag对应的区域'),
     ('FROM_RINGS_CAO_FEATURE',              'Plot', 1, 'GamePlay', 1, '环数内的指定地貌'),
     ('FROM_RINGS_CAO_TERRAIN_SETS',         'Plot', 1, 'GamePlay', 1, '环数内的指定函数地形（注：这个的CAO是地形判断函数）'),
     ('FROM_RINGS_CAO_TERRAIN',              'Plot', 1, 'GamePlay', 1, '环数内的指定地形（这个可以正常填地形）'),

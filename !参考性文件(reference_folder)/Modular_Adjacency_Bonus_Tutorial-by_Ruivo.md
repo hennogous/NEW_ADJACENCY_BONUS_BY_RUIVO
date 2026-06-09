@@ -259,6 +259,7 @@ How to fill it depends on your "Civ VI common sense," for example:
 * `FROM_RINGS_TYPETAG_RESOURCE`: Resource tag groups from the `TypeTags` table. Tags must be of category `RESOURCE_CLASS` (extensible). Example: 'RESOURCE_COFFEE' belongs to 'CLASS_GODDESS_OF_FESTIVALS'. Define localized names in the `Ruivo_CAO` table with "LOC_" placeholders.
 * `FROM_RINGS_CAO_IMPROVEMENT`: Improvement types, e.g., 'IMPROVEMENT_FARM'.
 * `FROM_RINGS_CAO_DISTRICT`: District types, e.g., 'DISTRICT_CAMPUS'.
+* `FROM_RINGS_TYPETAG_DISTRICT`: Districts with a matching `TypeTags` tag whose `Tags.Vocabulary` is `DISTRICT_CLASS`, e.g., 'CLASS_SALES'.
 * `FROM_RINGS_CAO_FEATURE`: Feature types, e.g., 'FEATURE_FOREST'.
 * `FROM_RINGS_CAO_TERRAIN`: Terrain types, e.g., 'TERRAIN_DESERT'.
 * `FROM_RINGS_CAO_TERRAIN_SETS`: Custom terrain functions (Lua), e.g., 'IsMountain' for all mountain types.

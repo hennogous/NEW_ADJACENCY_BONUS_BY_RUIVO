@@ -259,6 +259,7 @@ INSERT INTO Ruivo_New_Adjacency
 * FROM_RINGS_TYPETAG_RESOURCE 相邻资源标签组类别：从 TypeTags 表的资源所对应的 Tag 作为对象，不过这个 Tag 需要在 Tags 表中的类别为 RESOURCE_CLASS ，这是原版所没有的，而且是可拓展的，举个例子：“咖啡资源 RESOURCE_COFFEE” 对应 “节庆女神资源组 CLASS_GODDESS_OF_FESTIVALS”，那么我们可以把 CLASS_GODDESS_OF_FESTIVALS 作为相邻对象，包括咖啡、烟草等资源。不过要注意的是，请务必在 Ruivo_CAO 表中定义这个资源类别的翻译化汉化名称，也就是“LOC_”作为占位符，随后进行翻译。但事实上不通过 Ruivo_CAO 翻译也是可以的，因为你可以直接把 Tag 作为翻译占位符，C大佬的[“海洋区域拓展”](https://steamcommunity.com/sharedfiles/filedetails/?id=3668683945)便是这么做的。
 * FROM_RINGS_CAO_IMPROVEMENT 相邻指定改良类型：从 Improvements 表的 ImprovementType 作为对象，比如 'IMPROVEMENT_FARM' 农田。
 * FROM_RINGS_CAO_DISTRICT 相邻指定区域类型：从 Districts 表的 DistrictType 作为对象，比如 'DISTRICT_CAMPUS' 学院。
+* FROM_RINGS_TYPETAG_DISTRICT 相邻指定 tag 对应的区域：对象为 Tags/TypeTags 中 Vocabulary 为 DISTRICT_CLASS 的 tag，比如 'CLASS_SALES'。
 * FROM_RINGS_CAO_FEATURE 相邻指定地貌类型：从 Features 表的 FeatureType 作为对象，比如 'FEATURE_FOREST' 森林。
 * FROM_RINGS_CAO_TERRAIN 相邻指定地形类型：从 Terrains 表的 TerrainType 作为对象，比如 'TERRAIN_DESERT' 沙漠平原。
 * FROM_RINGS_CAO_TERRAIN_SETS 相邻指定地形函数：这个是我通过lua函数实现的判断，需要从 Ruivo_CAO 表找到可支持的函数，比如 'IsMountain' 就对应了所有的山脉类型组。
