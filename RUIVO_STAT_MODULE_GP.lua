@@ -4145,7 +4145,7 @@ local m_ResourceVisibility = {}
 
             if not (FreeCompose and ProvideType ~= "ShowFreeComposeYield") then
                 --获取加成值、产出图标、取代文本行
-                local numText = tostring(YieldChange)
+                local numText = RUIVO_toPlusMinusString(YieldChange)
                 local yieldIcon = RUIVO_GetYieldTextIcon(YieldType, YieldChange)..RUIVO_GetYieldText(YieldType, ProvideType)
                 local newAdjTextRow = GameInfo.Ruivo_New_Adjacency_Text[ID]
                 local AdjacentSubjectNum = 1 --默认是1个相邻对象
