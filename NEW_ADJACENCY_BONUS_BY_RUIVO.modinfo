@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Mod id="eaffc7c2-21d2-47e5-a060-ae55780d1337" version="1">
   <Properties>
     <Name>LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_NAME</Name>
@@ -63,6 +63,12 @@
       </Properties>
       <File>UI/RUIVO_MODULAR_UI.xml</File>
     </AddUserInterfaces>
+    <AddUserInterfaces id="DistrictDetailPanel">
+      <Properties>
+        <Context>InGame</Context>
+      </Properties>
+      <File>UI/RUIVO_DISTRICT_DETAIL_PANEL.xml</File>
+    </AddUserInterfaces>
     <ImportFiles id="UI Replacements import">
       <File>UI/Loaders/ToolTipLoader_MAB.lua</File>
     </ImportFiles>
@@ -86,6 +92,8 @@
     <File>UI/Loaders/ToolTipLoader_MAB.lua</File>
     <File>UI/RUIVO_MODULAR_UI.lua</File>
     <File>UI/RUIVO_MODULAR_UI.xml</File>
+    <File>UI/RUIVO_DISTRICT_DETAIL_PANEL.xml</File>
+    <File>UI/RUIVO_DISTRICT_DETAIL_PANEL.lua</File>
     <File>标准写法.sql</File>
     <File>模块化相邻加成教程-tutorial.md</File>
   </Files>

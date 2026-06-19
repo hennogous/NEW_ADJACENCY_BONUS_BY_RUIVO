@@ -101,9 +101,11 @@
         HasCustomAdjacentObject BOOLEAN NOT NULL CHECK (HasCustomAdjacentObject IN (0, 1)),
         --游戏环境
         Environment TEXT NOT NULL CHECK (Environment IN ("GamePlay", "UserInterface")),
-        --能否显示（也就是是否为 GamePlay Only 独占）
+        --能否显示，注意，这个参数被废弃了，不要使用这个参数
         CanDisplay BOOLEAN NOT NULL CHECK (CanDisplay IN (0, 1)),
-        --相邻显示文本
+        --不在进行规划时显示此加成（这个是针对单元格plot级别的，其他的本身就没打算显示在规划阶段）
+        DoNotDisplayWhenPlacement BOOLEAN NOT NULL CHECK (DoNotDisplayWhenPlacement IN (0, 1)) DEFAULT 0, 
+        --注意，这并不是相邻显示文本，只是介绍而已，不要去使用这个参数
         Tooltip TEXT NOT NULL
     );
     INSERT INTO Ruivo_AdjacencyType 
@@ -294,6 +296,11 @@
     ('FROM_RELIGION_DOMESTIC_CITIES',           'Religion', 0, 'GamePlay', 0, '国内信仰城市数量'),
     ('FROM_RELIGION_CITY_PLAYER_FOLLOWERS',     'Religion', 0, 'GamePlay', 0, '本城的信仰玩家宗教信徒数量（即使不是本城主流宗教）')
     ;
+
+--对在岗公民系的单元格级别相邻加成不在规划阶段显示，因为这个太过经常变动了，只在建成后显示就行了
+UPDATE Ruivo_AdjacencyType SET DoNotDisplayWhenPlacement = 1 WHERE AdjacencyType = 'FROM_SELF_WORKER';
+UPDATE Ruivo_AdjacencyType SET DoNotDisplayWhenPlacement = 1 WHERE AdjacencyType = 'FROM_ADJACENT_WORKER';
+UPDATE Ruivo_AdjacencyType SET DoNotDisplayWhenPlacement = 1 WHERE AdjacencyType = 'FROM_RINGS_WORKER';
 --============================================================================================================================
 
 
@@ -407,3 +414,13 @@
     INSERT INTO Ruivo_BinaryList (Num)
     VALUES (1), (2), (4), (8), (16), (32), (64), (128), (256), (512); --上限1023
 --============================================================================================================================
+
+
+--============================================================================================================================
+--建筑-区域对应表 用于在建造奇观/需要放置的建筑时，查找对应的区域类型来计算相邻加成
+    CREATE TABLE Ruivo_Building_District_Mapping (
+        BuildingType TEXT PRIMARY KEY NOT NULL,
+        DistrictType TEXT NOT NULL
+    );
+--============================================================================================================================
+

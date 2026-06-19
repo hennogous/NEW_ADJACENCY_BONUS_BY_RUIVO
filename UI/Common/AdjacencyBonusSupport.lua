@@ -203,8 +203,6 @@ local times = 0
 -- 函数在此，获得加成的字符
 function GetAdjacentYieldBonusString( eDistrict:number, pkCity:table, plot:table )
 	times = times + 1
-	-- 调试输出：统计调用次数
-	--print("单个区域相邻统计被调用了 "..times.." 次，当前为 "..Locale.Lookup(GameInfo.Districts[eDistrict].Name))
 
 	local tooltipText	:string  = "";
 	local totalBonuses	:string  = "";
@@ -331,7 +329,7 @@ function GetAdjacentYieldBonusString( eDistrict:number, pkCity:table, plot:table
 	-- 调用模组自定义函数，计算并追加额外的相邻加成文本和图标
 	--==================================================================================
 		if eDistrict then 
-			iconString, tooltipText = Ruivo_ExtraAdjacentYieldBonusString(eDistrict, pkCity, plot, iconString, tooltipText, Yield_Table)
+			iconString, tooltipText = Ruivo_ExtraAdjacentYieldBonusString(eDistrict, pkCity, plot, iconString, tooltipText, Yield_Table, hasDistrict)
 		end
 	--==================================================================================
 
@@ -462,3 +460,79 @@ function GetCityRelatedPlotIndexesWondersAlternative( pCity:table, buildingHash:
 	end
 	return plots;
 end
+
+-- ===========================================================================
+-- RUIVO MAB: 覆写 Realize2dArtForCityDistricts，在建筑/奇观放置时显示相邻加成
+-- 原理：本文件在 DistrictPlotIconManager.lua 头部被 include，此时目标函数尚未定义。
+--       利用 GetAdjacentYieldBonusString 首次调用时（所有函数已定义完毕）完成覆写。
+-- 兼容：不依赖 ReplaceUIScript，与 KublaiKhan_Vietnam 等 mod 无冲突。
+-- ===========================================================================
+local MAB_PADDING_X = 18;
+local MAB_PADDING_Y = 16;
+local MAB_OverrideApplied = false;
+
+-- 根据建筑类型解析对应的区域 Index
+local function MAB_GetDistrictIndexForBuilding(buildingType, building)
+	for row in GameInfo.Ruivo_Building_District_Mapping() do
+		if row.BuildingType == buildingType then
+			local districtRow = GameInfo.Districts[row.DistrictType];
+			if districtRow then return districtRow.Index; end
+		end
+	end
+	if building.IsWonder then
+		local wonderRow = GameInfo.Districts["DISTRICT_WONDER"];
+		if wonderRow then return wonderRow.Index; end
+	end
+	return nil;
+end
+
+-- 延迟覆写：Events.LoadScreenClose 触发时所有 UI 已初始化完毕，Realize2dArtForCityDistricts 已定义
+function MAB_TryApplyOverride()
+	if MAB_OverrideApplied then return end
+	if not Realize2dArtForCityDistricts then return end
+	MAB_OverrideApplied = true;
+
+	local MAB_BASE = Realize2dArtForCityDistricts;
+
+	Realize2dArtForCityDistricts = function(pCity)
+		local buildingHash = UI.GetInterfaceModeParameter(CityOperationTypes.PARAM_BUILDING_TYPE);
+		local building = GameInfo.Buildings[buildingHash];
+
+		if building ~= nil then
+			local eAdjDistrict = MAB_GetDistrictIndexForBuilding(building.BuildingType, building);
+			local bIsWonder = building.IsWonder;
+
+			local plots = GetCityRelatedPlotIndexesWondersAlternative(pCity, buildingHash);
+			for i, plotID in pairs(plots) do
+				local kPlot = Map.GetPlotByIndex(plotID);
+				if kPlot == nil then
+					UI.DataError("[MAB] Bad plot index #" .. tostring(plotID));
+				else
+					local bValidPlot = bIsWonder and kPlot:CanHaveWonder(building.Index, pCity:GetOwner(), pCity:GetID())
+						or not bIsWonder;
+					if bValidPlot then
+						local instance = GetInstanceAt(plotID);
+						if eAdjDistrict then
+							local yieldBonus, yieldTooltip = GetAdjacentYieldBonusString(eAdjDistrict, pCity, kPlot);
+							instance.PlotBonus:SetHide(yieldBonus == "");
+							instance.BonusText:SetText(yieldBonus);
+							instance.BonusText:SetToolTipString(yieldTooltip);
+						else
+							instance.PlotBonus:SetHide(true);
+							instance.BonusText:SetText("");
+						end
+						instance.PrereqIcon:SetHide(true);
+						local x, y = instance.BonusText:GetSizeVal();
+						instance.PlotBonus:SetSizeVal(x + MAB_PADDING_X, y + MAB_PADDING_Y);
+						RealizeIconStack(instance);
+					end
+				end
+			end
+		else
+			MAB_BASE(pCity);
+		end
+	end;
+end
+
+-- 游戏加载完毕后覆写（此时所有 UI 函数已就绪）
+Events.LoadScreenClose.Add(MAB_TryApplyOverride);

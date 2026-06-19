@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!-- 左侧滑入面板 -->
+  <SlideAnim ID="SlideOnShow" Size="auto,parent-500" Anchor="L,C" Begin="-480,0" End="0,0" Cycle="Once" Speed="5">
+    <Container ID="PanelContainer" Size="auto,parent-54" Offset="-3,54">
+
+      <!-- 主内容容器 -->
+      <Container Size="480,parent" Offset="0,0" ConsumeAllMouse="1">
+
+        <!-- ==========================================
+                     上半部：区域图标 + 描述
+        ========================================== -->
+        <Grid ID="TopGrid" Size="parent,160" Offset="0,0" Texture="Controls_ContainerBlue"
+          SliceStart="0,0" SliceCorner="3,3" SliceSize="9,9" SliceTextureSize="16,16">
+          <Grid Anchor="C,T" Offset="0,2" Size="parent-20,parent-8" Texture="Religion_OverviewFrame"
+            SliceCorner="15,15" SliceTextureSize="34,33">
+
+            <!-- 左边：区域图标 128 -->
+            <Image ID="DistrictIcon" Size="128,128" Anchor="L,C" Offset="15,0" Hidden="1"/>
+
+            <!-- 右边：描述滚动区 -->
+            <ScrollPanel Anchor="R,T" Offset="20,10" Size="290,parent-20"
+              Vertical="1" AutoSizePadding="0,0" Style="ScrollPanelWithRightBar">
+              <Label ID="DistrictDescText" Anchor="L,C" Style="FontNormal16" FontSize="16"
+                WrapWidth="280" Color="255,255,255,200"/>
+            </ScrollPanel>
+
+          </Grid>
+        </Grid>
+
+        <!-- ==========================================
+                     下半部
+        ========================================== -->
+        <Grid ID="BottomGrid" Size="parent,parent-200" Offset="0,164" Texture="Controls_ContainerBlue"
+          SliceStart="0,0" SliceCorner="3,3" SliceSize="9,9" SliceTextureSize="16,16">
+
+            <Stack Anchor="C,T" Offset="0,8" Size="parent,parent" StackGrowth="Down" Padding="4">
+
+              <!-- 标题 Grid：全局加成 -->
+              <Grid ID="TitleGrid" Anchor="C,T" Size="parent,34" Texture="Religion_OverviewFrame"
+                SliceCorner="15,15" SliceTextureSize="34,33">
+                <Label ID="BottomTitle" Anchor="C,C" Style="FontFlair14" FontSize="14"
+                  Align="Center" String="LOC_RUIVO_POPUP_BONUS_TITLE"/>
+              </Grid>
+
+              <!-- 左右分栏 Grid -->
+              <Grid ID="BonusContentGrid" Anchor="C,T" Size="parent,parent-50">
+                <!-- 左侧子 Grid 包裹 iconString 的 ScrollPanel -->
+                <Grid ID="LeftBonusGrid" Anchor="R,T" Size="240,parent" Texture="Religion_OverviewFrame"
+                  SliceCorner="15,15" SliceTextureSize="34,33">
+                  <ScrollPanel ID="IconScroll" Anchor="C,T" Offset="-16,10" Size="parent-12,parent-20"
+                    Vertical="1" AutoSizePadding="0,0" Style="ScrollPanelWithRightBar">
+                    <Label ID="IconStringText" Offset="24,2" Anchor="L,T" Style="FontNormal18" FontSize="18"
+                      WrapWidth="180"/>
+                  </ScrollPanel>
+                </Grid>
+
+                <!-- 右侧子 Grid 包裹 tooltip 的 ScrollPanel -->
+                <Grid ID="RightBonusGrid" Anchor="L,T" Size="240,parent" Texture="Religion_OverviewFrame"
+                  SliceCorner="15,15" SliceTextureSize="34,33">
+                  <ScrollPanel ID="TooltipScroll" Anchor="C,T" Offset="-16,10" Size="parent-12,parent-20"
+                    Vertical="1" AutoSizePadding="0,0" Style="ScrollPanelWithRightBar">
+                    <Label ID="TooltipText" Offset="24,2" Anchor="L,T" Style="FontNormal14" FontSize="14"
+                      WrapWidth="200"/>
+                  </ScrollPanel>
+                </Grid>
+              </Grid>
+
+            </Stack>
+
+        </Grid>
+
+      </Container>
+
+      <!-- 头部标题栏 -->
+      <Grid Size="488,60" Offset="3,-25" Style="HeaderBannerLeft" ConsumeAllMouse="1">
+        <Label ID="HeaderText" Size="200,50" Offset="0,7" Anchor="C,T" Style="FontFlair16"
+          Color0="0,59,77,255" SmallCaps="20" SmallCapsType="FirstOnly"
+          String="LOC_RUIVO_POPUP_HEADER" TruncateWidth="380" TruncatedTooltip="1"/>
+        <Button ID="CloseButton" Size="32,32" Offset="10,-2" Anchor="R,T" Texture="Controls_CloseButtonAlt"/>
+      </Grid>
+
+    </Container>
+  </SlideAnim>
+
+</Context>

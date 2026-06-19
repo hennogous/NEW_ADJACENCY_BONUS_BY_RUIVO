@@ -544,5 +544,18 @@
 		</Row>
 
 <!--中文文本-->
+
+	<!--区域详情左弹窗文本-->
+		<Row Tag="LOC_RUIVO_POPUP_HEADER" Language="zh_Hans_CN">
+			<Text>区域详情</Text>
+		</Row>
+		<Row Tag="LOC_RUIVO_POPUP_BONUS_TITLE" Language="zh_Hans_CN">
+			<Text>固有加成</Text>
+		</Row>
+		<Row Tag="LOC_RUIVO_POPUP_NO_GLOBAL_BONUS" Language="zh_Hans_CN">
+			<Text>无固有加成</Text>
+		</Row>
+	<!--区域详情左弹窗文本-->
+
 	</LocalizedText>
 </GameData>

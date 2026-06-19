@@ -334,7 +334,7 @@ INSERT INTO Ruivo_New_Adjacency
 (ID, 
  DistrictType,          ProvideType,   YieldType,       YieldChange,    AdjacencyType,                   CustomAdjacentObject,  Rings,  DistrictModifiers, ApplyForUniqueDistricts, ModifierOwner, WhoIsTheOwner, CollectionType) VALUES
 ('RUIVO_DISTRICT_THEATER_YIELD_GOLD_FROM_RINGS_CAO_RESOURCE_CLASS_2', 
- 'DISTRICT_THEATER',   'SelfBonus',   'YIELD_GOLD',     1,             'FROM_RINGS_CAO_RESOURCE_CLASS', 'RESOURCECLASS_LUXURY',     2,                  0,                       1, 'TraitModifiers', 'TRAIT_LEADER_MAGNIFICENCES', 'COLLECTION_PLAYER_DISTRICTS');
+ 'DISTRICT_THEATER',   'SelfBonus',   'YIELD_GOLD',     1,             'FROM_RINGS_CAO_RESOURCE_CLASS', 'RESOURCECLASS_LUXURY',     2,                  1,                       1, 'TraitModifiers', 'TRAIT_LEADER_MAGNIFICENCES', 'COLLECTION_PLAYER_DISTRICTS');
 ```
 
 ![1775881303326](image/tutorial_images/1775881303326.png)

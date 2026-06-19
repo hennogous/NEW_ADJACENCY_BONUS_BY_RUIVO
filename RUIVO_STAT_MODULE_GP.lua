@@ -1,4 +1,4 @@
-﻿--地形地貌改良资源单位建筑区域缓存表
+--地形地貌改良资源单位建筑区域缓存表
 TerrainTypeMap = {}
 FeatureTypeMap = {}
 ImprovementTypeMap = {}
@@ -714,7 +714,8 @@ RuivoAdjacencyInfo = {}
             RuivoAdjacencyInfo[row.AdjacencyType] = {
                 AttributeType = row.AttributeType,
                 Environment = row.Environment,
-                CanDisplay = row.CanDisplay
+                CanDisplay = row.CanDisplay,
+                DoNotDisplayWhenPlacement = row.DoNotDisplayWhenPlacement
             }
         end
     end
@@ -3729,7 +3730,10 @@ local m_ResourceVisibility = {}
     }
 --==============================================
 --模块化相邻加成的显示部分--返回 iconString, tooltipText
-    function Ruivo_ExtraAdjacentYieldBonusString(eDistrict, pkCity, plot, iconString, tooltipText, Yield_Table)
+-- hasDistrict: nil/true=已建成(全显示), false=规划中(仅Plot/District系进iconString)
+-- plot: nil=弹窗模式(仅City/Player/Game系)
+    function Ruivo_ExtraAdjacentYieldBonusString(eDistrict, pkCity, plot, iconString, tooltipText, Yield_Table, hasDistrict)
+        if hasDistrict == nil then hasDistrict = true end
         local targetDistrictType = GameInfo.Districts[eDistrict].DistrictType --获取目标区域
         local cachedEntries = Ruivo_Adjacency_Cache.byDistrict[targetDistrictType] or {} --获取目标区域的模块化相邻加成
         
@@ -3791,57 +3795,87 @@ local m_ResourceVisibility = {}
         --===========================================
         --仅遍历该区域类型的行
         for _, row in ipairs(cachedEntries) do
-            -- 获取玩家信息
-            local playerID = pkCity:GetOwner()
+            -- 获取玩家信息 (nil plot时兼容)
+            local playerID = pkCity and pkCity:GetOwner() or Game.GetLocalPlayer()
             local CivilizationType = PlayerConfigurations[playerID]:GetCivilizationTypeName()
             local LeaderType = PlayerConfigurations[playerID]:GetLeaderTypeName()
             
+            -- 获取相邻类型的属性层级
+            local attrInfo = RuivoAdjacencyInfo[row.AdjacencyType]
+            local attrType = attrInfo and attrInfo.AttributeType or 'Plot'
+            local bIsMapBonus = (attrType == 'Plot' or attrType == 'District')
+
             -- 判断模块
             local CanDisplay = CanDisplayModule(row, CivilizationType, LeaderType, playerID, pkCity)
 
             -- 同时满足区域类型和特质要求
             if CanDisplay then
 
-                --如果有经纬度判断，则再加一行
-                if row.AdjacencyType == 'FROM_LATITUDE' or row.AdjacencyType == 'FROM_POLE' then
+                --如果有经纬度判断，则再加一行（仅当有plot时）
+                if plot and (row.AdjacencyType == 'FROM_LATITUDE' or row.AdjacencyType == 'FROM_POLE') then
                     LatitudeRating = true;
                 end
 
                 --如果是自由组装模式而且不是ShowFreeComposeYield类型，则不显示
                 if not (row.FreeCompose and row.ProvideType ~= "ShowFreeComposeYield") then
-                    -- 计算加成数值
-                    local iX, iY = plot:GetX(), plot:GetY()
-                    local iBonus = StatsModule_For_Display(row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pkCity, row.Rings)
+                    -- 计算加成数值：空单元格坐标是(9999,9999)
+                    local iX, iY = 9999, 9999
+                    if plot then
+                        iX, iY = plot:GetX(), plot:GetY()
+                    end
+                    -- pcall 保护：plot=nil 时 Plot/District 系函数会炸，兜底返回 -1
+                    local ok, result = pcall(StatsModule_For_Display, row.AdjacencyType, row.CustomAdjacentObject, iX, iY, playerID, pkCity, row.Rings)
+                    local iBonus = ok and result or -1
                     local AdjacentSubjectNum = iBonus --缓存相邻对象数量
                     iBonus = math.floor(math.max(iBonus * row.YieldChange, 0)) --不能为负数
                     iBonus = math.min(iBonus, maxNum)
 
+                    -- 分流逻辑：
+                    -- plot=nil: 弹窗模式，仅非Plot/District系
+                    -- !hasDistrict: 规划(地图)，仅Plot/District系进iconString
+                    -- hasDistrict: 已建成，全部进iconString
+                    local bShowInIcon = false
+                    if plot == nil then
+                        bShowInIcon = not bIsMapBonus
+                    elseif hasDistrict then
+                        bShowInIcon = true
+                    else
+                        bShowInIcon = bIsMapBonus
+                    end
+
+                    -- DoNotDisplayWhenPlacement：规划阶段不显示此相邻加成（如WORKER系）
+                    if (not hasDistrict) and attrInfo and attrInfo.DoNotDisplayWhenPlacement then
+                        bShowInIcon = false
+                    end
+
                     --更新总加成表
                     local yieldType = row.YieldType
                     local ProvideType = row.ProvideType
-                    if TotalBonus[yieldType] ~= nil then
-                        if DirectBonusTypes[row.ProvideType] then
-                            TotalBonus[yieldType] = TotalBonus[yieldType] + iBonus
-                        elseif MultiplierTypes[row.ProvideType] then
-                            TotalBonus["MULTIPLIER_"..yieldType] = TotalBonus["MULTIPLIER_"..yieldType] + iBonus
-                        end
+                    if bShowInIcon then
+                        if TotalBonus[yieldType] ~= nil then
+                            if DirectBonusTypes[row.ProvideType] then
+                                TotalBonus[yieldType] = TotalBonus[yieldType] + iBonus
+                            elseif MultiplierTypes[row.ProvideType] then
+                                TotalBonus["MULTIPLIER_"..yieldType] = TotalBonus["MULTIPLIER_"..yieldType] + iBonus
+                            end
 
-                    --对于资源的产出进行特殊的处理
-                    elseif row.ProvideType == 'SelfExtractResource' then
-                        local resourceType = row.YieldType
-                        --如果原表中没有，则添加到显示的产出顺序
-                        if not contains(yieldOrder, resourceType) then
-                            table.insert(yieldOrder, resourceType)
+                        --对于资源的产出进行特殊的处理
+                        elseif row.ProvideType == 'SelfExtractResource' then
+                            local resourceType = row.YieldType
+                            --如果原表中没有，则添加到显示的产出顺序
+                            if not contains(yieldOrder, resourceType) then
+                                table.insert(yieldOrder, resourceType)
+                            end
+                            --lua支持拓展表的键值对
+                            if resourceType then
+                                TotalBonus[resourceType] = (TotalBonus[resourceType] or 0) + iBonus
+                                --print(resourceType, TotalBonus[resourceType])
+                            end                        
                         end
-                        --lua支持拓展表的键值对
-                        if resourceType then
-                            TotalBonus[resourceType] = (TotalBonus[resourceType] or 0) + iBonus
-                            --print(resourceType, TotalBonus[resourceType])
-                        end                        
                     end
  
-                    --非零时添加tooltip
-                    if iBonus ~= 0 then
+                    --非零时添加tooltip (仅当归属本函数调用方时)
+                    if iBonus ~= 0 and bShowInIcon then
                         --提供相邻加成已弃用，只有自己的相邻加成
                         if row.ProvideType ~= 'ProvideToADJ' then
                             local numText = tostring(iBonus)
@@ -3921,8 +3955,8 @@ local m_ResourceVisibility = {}
         end
         --===========================================
 
-        --显示赤道和两极靠近比例
-        if LatitudeRating then 
+        --显示赤道和两极靠近比例（仅当有plot时）
+        if LatitudeRating and plot then 
             local iX, iY = plot:GetX(), plot:GetY()
             local FROM_LATITUDE = FROM_LATITUDE(iX, iY)
             local FROM_POLE = FROM_POLE(iX, iY)
