@@ -17,6 +17,8 @@ function Open()
         Controls.SlideOnShow:SetToBeginning();
         Controls.SlideOnShow:Play();
         UI.PlaySound("Tech_Tray_Slide_Open");
+    else
+        RefreshContent();
     end
 end
 
@@ -204,20 +206,12 @@ function OnInterfaceModeChanged(oldMode, newMode)
 end
 
 -- ===========================================================================
--- 初始化：注册关闭按钮、动画回调、ESC 输入、模式切换事件
+-- 初始化：注册关闭按钮、动画回调、模式切换事件
 -- ===========================================================================
 function Initialize()
     ContextPtr:SetHide(true);
     Controls.CloseButton:RegisterCallback(Mouse.eLClick, Close);
     Controls.SlideOnShow:RegisterEndCallback(OnAnimEnd);
-    ContextPtr:SetInputHandler(function(pInputStruct)
-        if pInputStruct:GetMessageType() == KeyEvents.KeyUp
-           and pInputStruct:GetKey() == Keys.VK_ESCAPE then
-            Close();
-            return true;
-        end
-        return false;
-    end, true);
     Events.InterfaceModeChanged.Add(OnInterfaceModeChanged);
 end
 Initialize();

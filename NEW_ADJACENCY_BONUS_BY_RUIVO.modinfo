@@ -13,8 +13,19 @@
     <File>FRONTEND_TEXT.xml</File>
   </LocalizedText>
 
+  <ActionCriteria>
+    <Criteria id="RUIVO_DISABLE_MAB_POPUP_CRITERIA">
+      <ConfigurationValueMatches>
+        <ConfigurationId>RUIVO_DISABLE_MAB_POPUP</ConfigurationId>
+        <Group>Game</Group>
+        <Value>0</Value>
+      </ConfigurationValueMatches>
+    </Criteria>
+  </ActionCriteria>
+
   <FrontEndActions>
     <UpdateText id="Text">
+      <File>FRONTEND_TEXT.xml</File>
       <File>NEW_ADJACENCY_BONUS_BY_RUIVO_CORE_TEXT.xml</File>
       <File>Localization/MAB_China_Taiwan.xml</File>
       <File>Localization/MAB_en_US.xml</File>
@@ -67,6 +78,7 @@
       <Properties>
         <Context>InGame</Context>
       </Properties>
+      <Criteria>RUIVO_DISABLE_MAB_POPUP_CRITERIA</Criteria>
       <File>UI/RUIVO_DISTRICT_DETAIL_PANEL.xml</File>
     </AddUserInterfaces>
     <ImportFiles id="UI Replacements import">

@@ -62,5 +62,26 @@
 		</Row>
 	<!--MOD INFO-->
 	
+	<!--高级设置参数文本-->
+		<Row Tag="LOC_RUIVO_DISABLE_MAB_POPUP_NAME" Language="zh_Hans_CN">
+			<Text>关闭区域详情左侧弹窗</Text>
+		</Row>
+		<Row Tag="LOC_RUIVO_DISABLE_MAB_POPUP_DESC" Language="zh_Hans_CN">
+			<Text>勾选此项以禁用本模组的区域详情左侧UI面板。</Text>
+		</Row>
+		<Row Tag="LOC_RUIVO_DISABLE_MAB_POPUP_NAME" Language="zh_Hant_HK">
+			<Text>關閉區域詳情左側彈窗</Text>
+		</Row>
+		<Row Tag="LOC_RUIVO_DISABLE_MAB_POPUP_DESC" Language="zh_Hant_HK">
+			<Text>勾選此項以禁用本模組的區域詳情左側UI面板。</Text>
+		</Row>
+		<Row Tag="LOC_RUIVO_DISABLE_MAB_POPUP_NAME" Language="en_US">
+			<Text>Disable District Details Popup</Text>
+		</Row>
+		<Row Tag="LOC_RUIVO_DISABLE_MAB_POPUP_DESC" Language="en_US">
+			<Text>Check this to disable the left-side UI panel for district details.</Text>
+		</Row>
+	<!--高级设置参数文本-->
+
 	</LocalizedText>
 </GameData>

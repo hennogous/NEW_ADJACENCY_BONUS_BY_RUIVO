@@ -542,5 +542,18 @@
 		<Row Tag="LOC_RUIVO_FROM_UI_MILITARY_STRENGTH" Language="en_US">
 			<Text>+{1_iBonus} {2_YieldIcon} from {3_AdjacentSubjectNum} [ICON_Strength] Military Strength.</Text>
 		</Row>
+
+	<!--DISTRICT DETAILS POPUP-->
+		<Row Tag="LOC_RUIVO_POPUP_HEADER" Language="en_US">
+			<Text>District Details</Text>
+		</Row>
+		<Row Tag="LOC_RUIVO_POPUP_BONUS_TITLE" Language="en_US">
+			<Text>Inherent Bonus</Text>
+		</Row>
+		<Row Tag="LOC_RUIVO_POPUP_NO_GLOBAL_BONUS" Language="en_US">
+			<Text>No Inherent Bonus</Text>
+		</Row>
+	<!--DISTRICT DETAILS POPUP-->
+
 	</LocalizedText>
 </GameData>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <GameData>
 	<LocalizedText>
-<!--繁體中文文本-->
+<!--繁體中文文本，中国台湾省适配版-->
 	<!--模組標題-->
 		<Row Tag="LOC_NEW_ADJACENCY_BONUS_BY_RUIVO_NAME" Language="zh_Hant_HK">
 			<Text>[COLOR:ResGoldLabelCS]【未來已至】模組化相鄰加成[ENDCOLOR]·[COLOR:PiratesButtonCS]核心[ENDCOLOR]</Text>
@@ -542,5 +542,18 @@
 		<Row Tag="LOC_RUIVO_FROM_UI_MILITARY_STRENGTH" Language="zh_Hant_HK">
 			<Text>+{1_iBonus} {2_YieldIcon}，來自玩家總計{3_AdjacentSubjectNum}點 [ICON_Strength] 軍事力量。</Text>
 		</Row>
+
+	<!--區域詳情左彈窗文本-->
+		<Row Tag="LOC_RUIVO_POPUP_HEADER" Language="zh_Hant_HK">
+			<Text>區域詳情</Text>
+		</Row>
+		<Row Tag="LOC_RUIVO_POPUP_BONUS_TITLE" Language="zh_Hant_HK">
+			<Text>固有加成</Text>
+		</Row>
+		<Row Tag="LOC_RUIVO_POPUP_NO_GLOBAL_BONUS" Language="zh_Hant_HK">
+			<Text>無固有加成</Text>
+		</Row>
+	<!--區域詳情左彈窗文本-->
+
 	</LocalizedText>
 </GameData>
